@@ -2,14 +2,14 @@ package store
 
 import (
 	"fmt"
-
-	"github.com/eampleev23/diploma.git/cmd/internal/cnf"
-	"github.com/eampleev23/diploma.git/cmd/internal/mlg"
+	"github.com/eampleev23/diploma/internal/cnf"
+	"github.com/eampleev23/diploma/internal/mlg"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 )
 
 type Store interface {
-	// Close закрывает соединение с базой данных
-	Close() (err error)
+	// DBConnClose закрывает соединение с базой данных
+	DBConnClose() (err error)
 }
 
 func NewStorage(c *cnf.Config, l *mlg.ZapLog) (Store, error) {

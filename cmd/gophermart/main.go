@@ -2,16 +2,15 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
-
-	"github.com/eampleev23/diploma.git/internal/cnf"
-	"github.com/eampleev23/diploma.git/internal/handlers"
-	"github.com/eampleev23/diploma.git/internal/mlg"
-	"github.com/eampleev23/diploma.git/internal/myauth"
-	"github.com/eampleev23/diploma.git/internal/store"
+	"github.com/eampleev23/diploma/internal/cnf"
+	"github.com/eampleev23/diploma/internal/handlers"
+	"github.com/eampleev23/diploma/internal/mlg"
+	"github.com/eampleev23/diploma/internal/myauth"
+	"github.com/eampleev23/diploma/internal/store"
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
+	"log"
+	"net/http"
 )
 
 func main() {
@@ -45,7 +44,7 @@ func run() error {
 	if len(c.DBDSN) != 0 {
 		// Отложенно закрываем соединение с бд.
 		defer func() {
-			if err := s.Close(); err != nil {
+			if err := s.DBConnClose(); err != nil {
 				mL.ZL.Info("store failed to properly close the DB connection")
 			}
 		}()
@@ -59,7 +58,7 @@ func run() error {
 	mL.ZL.Info("Running server", zap.String("address", c.RanAddr))
 	r := chi.NewRouter()
 	r.Use(mL.RequestLogger)
-	r.Post("/api/user/register", h.Registration)
+	r.Post("/api/user/register", h.Register)
 	err = http.ListenAndServe(c.RanAddr, r)
 	if err != nil {
 		return fmt.Errorf("ошибка ListenAndServe: %w", err)

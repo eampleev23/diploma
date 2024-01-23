@@ -3,19 +3,26 @@ package store
 import (
 	"database/sql"
 	"embed"
+	"errors"
 	"fmt"
-
-	"github.com/eampleev23/diploma.git/cmd/internal/cnf"
-	"github.com/eampleev23/diploma.git/cmd/internal/mlg"
+	"github.com/eampleev23/diploma/internal/cnf"
+	"github.com/eampleev23/diploma/internal/mlg"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
-	"github.com/pkg/errors"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 type DBStore struct {
 	dbConn *sql.DB
 	c      *cnf.Config
 	l      *mlg.ZapLog
+}
+
+func (D DBStore) DBConnClose() (err error) {
+	if err := D.dbConn.Close(); err != nil {
+		return fmt.Errorf("failed to properly close the DB connection %w", err)
+	}
+	return nil
 }
 
 func NewDBStore(c *cnf.Config, l *mlg.ZapLog) (*DBStore, error) {
@@ -50,13 +57,6 @@ func runMigrations(dsn string) error {
 		if !errors.Is(err, migrate.ErrNoChange) {
 			return fmt.Errorf("failed to apply migrations to the DB: %w", err)
 		}
-	}
-	return nil
-}
-
-func (ds DBStore) Close() error {
-	if err := ds.dbConn.Close(); err != nil {
-		return fmt.Errorf("failed to properly close the DB connection %w", err)
 	}
 	return nil
 }

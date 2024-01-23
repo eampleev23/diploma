@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"github.com/eampleev23/diploma.git/internal/cnf"
-	"github.com/eampleev23/diploma.git/internal/mlg"
-	"github.com/eampleev23/diploma.git/internal/myauth"
-	"github.com/eampleev23/diploma.git/internal/store"
+	"github.com/eampleev23/diploma/internal/cnf"
+	"github.com/eampleev23/diploma/internal/mlg"
+	"github.com/eampleev23/diploma/internal/myauth"
+	"github.com/eampleev23/diploma/internal/store"
 )
 
 var keyUserIDCtx myauth.Key = myauth.KeyUserIDCtx

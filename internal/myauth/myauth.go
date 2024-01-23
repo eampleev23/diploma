@@ -1,11 +1,10 @@
 package myauth
 
 import (
+	"github.com/eampleev23/diploma/internal/cnf"
+	"github.com/eampleev23/diploma/internal/mlg"
 	"log"
 	"net/http"
-
-	"github.com/eampleev23/diploma.git/cmd/internal/cnf"
-	"github.com/eampleev23/diploma.git/cmd/internal/mlg"
 )
 
 type Authorizer struct {

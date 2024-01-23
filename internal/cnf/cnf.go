@@ -2,10 +2,9 @@ package cnf
 
 import (
 	"flag"
+	"github.com/eampleev23/diploma/internal/mlg"
 	"os"
 	"time"
-
-	"github.com/eampleev23/diploma.git/cmd/internal/mlg"
 )
 
 type Config struct {

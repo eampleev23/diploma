@@ -1,0 +1,7 @@
+BEGIN TRANSACTION;
+
+DROP TABLE IF EXISTS users;
+DROP INDEX user_login_unique;
+DROP TABLE IF EXISTS orders;
+
+COMMIT;
