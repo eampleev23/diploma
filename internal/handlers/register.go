@@ -1,10 +1,13 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 )
 
 // Register регистрирует нового пользователя
 func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
-	h.l.ZL.Info("Registration handler got request..")
+	// Сначала получим контент тайп и отдадим соответствующий ответ если это не JSON
+	contentType := r.Header.Get("Content-Type")
+	log.Println("contentType=", contentType)
 }
