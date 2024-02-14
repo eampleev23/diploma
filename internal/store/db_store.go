@@ -1,14 +1,18 @@
 package store
 
 import (
+	"context"
 	"database/sql"
 	"embed"
 	"errors"
 	"fmt"
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/mlg"
+	"github.com/eampleev23/diploma/internal/models"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5/pgconn"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -59,4 +63,19 @@ func runMigrations(dsn string) error {
 		}
 	}
 	return nil
+}
+
+// ErrConflict ошибка, которую используем для сигнала о нарушении целостности данных.
+var ErrConflict = errors.New("data conflict")
+
+// InsertUser занимается непосредственно запросом вставки строки в бд.
+func (D DBStore) InsertUser(ctx context.Context, userRegReq models.UserRegReq) (userBack models.User, err error) {
+	_, err = D.dbConn.ExecContext(ctx, `INSERT INTO users(login, password)
+VALUES ($1, $2)`, userRegReq.Login, userRegReq.Password)
+	// Проверяем, что ошибка сигнализирует о потенциальном нарушении целостности данных
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
+		err = ErrConflict
+	}
+	return models.User{}, err
 }
