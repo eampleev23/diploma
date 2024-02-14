@@ -12,8 +12,8 @@ import (
 // Register регистрирует нового пользователя
 func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-Type")
-	supportsJson := strings.Contains(contentType, "application/json")
-	if !supportsJson {
+	supportsJSON := strings.Contains(contentType, "application/json")
+	if !supportsJSON {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
