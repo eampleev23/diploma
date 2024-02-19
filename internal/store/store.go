@@ -12,7 +12,7 @@ import (
 type Store interface {
 	// DBConnClose закрывает соединение с базой данных
 	DBConnClose() (err error)
-	// InsertUser добавляет нового пользователя или добавляет ошибку о конфликте данных
+	// InsertUser добавляет нового пользователя или возвращает ошибку о конфликте данных
 	InsertUser(ctx context.Context, userRegReq models.UserRegReq) (userBack models.User, err error)
 }
 

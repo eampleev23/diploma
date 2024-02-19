@@ -21,6 +21,7 @@ func main() {
 }
 
 func run() error {
+
 	mL, err := mlg.NewZapLogger("info")
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new logger: %w", err)
@@ -32,6 +33,11 @@ func run() error {
 		return fmt.Errorf("failed to initialize a new config: %w", err)
 	}
 	au, err := myauth.Initialize(c, mL)
+	if err != nil {
+		return fmt.Errorf("failed to initialize a new authorizer: %w", err)
+	}
+
+	au, err := myauth.Initialize(c.SecretKey, c.TokenExp, mL)
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new authorizer: %w", err)
 	}

@@ -17,6 +17,10 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	// проверяем, не авторизован ли пользователь, отправивший запрос
+	userID, _, err := h.GetUserID(r)
+	// ...
+	fmt.Println(userID)
 
 	// Получаем данные в случае корректного запроса.
 	var req models.UserRegReq
@@ -33,5 +37,10 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusConflict)
 		return
 	}
+	// мы здесь если пользователь успешно зарегистрирован
+	// надо установить куку
+	// а в самом начале надо проверить на куку, возможно он уже авторизован и тогда надо отправлять
+	// внуреннюю ошибку сервера
+
 	fmt.Println("userBack=", userBack)
 }
