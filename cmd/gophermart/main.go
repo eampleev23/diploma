@@ -32,12 +32,8 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new config: %w", err)
 	}
-	au, err := myauth.Initialize(c, mL)
-	if err != nil {
-		return fmt.Errorf("failed to initialize a new authorizer: %w", err)
-	}
 
-	au, err := myauth.Initialize(c.SecretKey, c.TokenExp, mL)
+	au, err := myauth.Initialize(c, mL)
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new authorizer: %w", err)
 	}

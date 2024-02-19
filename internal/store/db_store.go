@@ -70,12 +70,17 @@ var ErrConflict = errors.New("data conflict")
 
 // InsertUser занимается непосредственно запросом вставки строки в бд.
 func (D DBStore) InsertUser(ctx context.Context, userRegReq models.UserRegReq) (userBack models.User, err error) {
-	_, err = D.dbConn.ExecContext(ctx, `INSERT INTO users(login, password)
-VALUES ($1, $2)`, userRegReq.Login, userRegReq.Password)
+
+	//_, err = D.dbConn.ExecContext(ctx, `INSERT INTO users(login, password)
+	//VALUES ($1, $2) RETURNING id, login, password`, userRegReq.Login, userRegReq.Password)
+
+	userBack = models.User{}
+	err = D.dbConn.QueryRow("INSERT INTO users (login, password) VALUES($1, $2) RETURNING id, login, password", userRegReq.Login, userRegReq.Password).Scan(&userBack.ID, &userBack.Login, &userBack.Password)
 	// Проверяем, что ошибка сигнализирует о потенциальном нарушении целостности данных
+	fmt.Println("userBack=", userBack)
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
 		err = ErrConflict
 	}
-	return models.User{}, err
+	return userBack, err
 }

@@ -18,9 +18,10 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// проверяем, не авторизован ли пользователь, отправивший запрос
-	userID, _, err := h.GetUserID(r)
+	userID, isAuth, err := h.GetUserID(r)
 	// ...
-	fmt.Println(userID)
+	fmt.Println("userID=", userID)
+	fmt.Println("isAuth=", isAuth)
 
 	// Получаем данные в случае корректного запроса.
 	var req models.UserRegReq

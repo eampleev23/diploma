@@ -3,6 +3,8 @@ package myauth
 import (
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/mlg"
+	"github.com/golang-jwt/jwt/v4"
+	"go.uber.org/zap"
 	"log"
 	"net/http"
 )
@@ -42,4 +44,25 @@ func (au *Authorizer) Auth(next http.Handler) http.Handler {
 
 	}
 	return http.HandlerFunc(fn)
+}
+
+// Claims описывает утверждения, хранящиеся в токене + добавляет кастомное UserID.
+type Claims struct {
+	jwt.RegisteredClaims
+	UserID int
+}
+
+// GetUserID возвращает ID пользователя.
+func (au *Authorizer) GetUserID(tokenString string) (int, error) {
+	// Создаем экземпляр структуры с утверждениями
+	claims := &Claims{}
+	// Парсим из строки токена tokenString в структуру claims
+	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(au.c.SecretKey), nil
+	})
+	if err != nil {
+		au.l.ZL.Info("Failed in case to get ownerId from token ", zap.Error(err))
+	}
+
+	return claims.UserID, nil
 }
