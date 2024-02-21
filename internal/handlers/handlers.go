@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/mlg"
 	"github.com/eampleev23/diploma/internal/myauth"
@@ -31,11 +30,11 @@ func (h *Handlers) GetUserID(r *http.Request) (userID int, isAuth bool, err erro
 	h.l.ZL.Debug("GetUserID started.. ")
 	cookie, err := r.Cookie("token")
 	if err != nil {
-		return 0, false, fmt.Errorf("token not set in cookie: %w", err)
+		return 0, false, nil
 	}
 	userID, err = h.au.GetUserID(cookie.Value)
 	if err != nil {
-		return 0, false, fmt.Errorf("au.GetUserID error: %w", err)
+		return 0, false, nil
 	}
 	return userID, true, nil
 }

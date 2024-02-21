@@ -20,6 +20,11 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 
 	//проверяем, не авторизован ли пользователь, отправивший запрос
 	_, isAuth, err := h.GetUserID(r)
+	if err != nil {
+		h.l.ZL.Error("GetUserID fail")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	h.l.ZL.Debug("isAuth", zap.Bool("auth", isAuth))
 	if isAuth {
 		h.l.ZL.Error("already authorized user is going to register")

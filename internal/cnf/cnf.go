@@ -31,7 +31,7 @@ func (c *Config) SetValues() error {
 	// регистрируем переменную flagRunAddr как аргумент -a со значением по умолчанию :8080
 	flag.StringVar(&c.RanAddr, "a", "localhost:8080", "address and port to run server")
 	// регистрируем уровень логирования
-	flag.StringVar(&c.LogLevel, "l", "error", "logger level")
+	flag.StringVar(&c.LogLevel, "l", "debug", "logger level")
 	// принимаем строку подключения к базе данных
 	flag.StringVar(&c.DBDSN, "d", "", "postgres database")
 	// принимаем секретный ключ сервера для авторизации
