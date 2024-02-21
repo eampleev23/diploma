@@ -21,16 +21,17 @@ func main() {
 }
 
 func run() error {
-	mL, err := mlg.NewZapLogger("info")
-	if err != nil {
-		return fmt.Errorf("failed to initialize a new logger: %w", err)
-	}
-	mL.ZL.Info("Logger success created..")
-
-	c, err := cnf.NewConfig(mL)
+	c, err := cnf.NewConfig()
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new config: %w", err)
 	}
+
+	mL, err := mlg.NewZapLogger(c.LogLevel)
+	if err != nil {
+		return fmt.Errorf("failed to initialize a new logger: %w", err)
+	}
+	mL.ZL.Debug("Logger success created..")
+
 	au, err := myauth.Initialize(c, mL)
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new authorizer: %w", err)
