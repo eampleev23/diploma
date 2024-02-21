@@ -21,17 +21,16 @@ func main() {
 }
 
 func run() error {
+	c, err := cnf.NewConfig()
+	if err != nil {
+		return fmt.Errorf("failed to initialize a new config: %w", err)
+	}
 
-	mL, err := mlg.NewZapLogger("info")
+	mL, err := mlg.NewZapLogger(c.LogLevel)
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new logger: %w", err)
 	}
 	mL.ZL.Info("Logger success created..")
-
-	c, err := cnf.NewConfig(mL)
-	if err != nil {
-		return fmt.Errorf("failed to initialize a new config: %w", err)
-	}
 
 	au, err := myauth.Initialize(c, mL)
 	if err != nil {
@@ -60,6 +59,7 @@ func run() error {
 	mL.ZL.Info("Running server", zap.String("address", c.RanAddr))
 	r := chi.NewRouter()
 	r.Use(mL.RequestLogger)
+	//r.Use(au.Auth)
 	r.Post("/api/user/register", h.Register)
 	err = http.ListenAndServe(c.RanAddr, r)
 	if err != nil {

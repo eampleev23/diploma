@@ -11,12 +11,14 @@ import (
 
 // Register регистрирует нового пользователя
 func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
+	// Проверяем формат запроса
 	contentType := r.Header.Get("Content-Type")
 	supportsJSON := strings.Contains(contentType, "application/json")
 	if !supportsJSON {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	// проверяем, не авторизован ли пользователь, отправивший запрос
 	userID, isAuth, err := h.GetUserID(r)
 	// ...
@@ -32,9 +34,10 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	userBack, err := h.s.InsertUser(r.Context(), req)
+
+	newUser, err := h.s.InsertUser(r.Context(), req)
 	if err != nil {
-		fmt.Println("error", err)
+		h.l.ZL.Debug("login is not uniq", zap.Error(err))
 		w.WriteHeader(http.StatusConflict)
 		return
 	}
@@ -43,5 +46,6 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 	// а в самом начале надо проверить на куку, возможно он уже авторизован и тогда надо отправлять
 	// внуреннюю ошибку сервера
 
-	fmt.Println("userBack=", userBack)
+	fmt.Println("newUser=", newUser)
+
 }

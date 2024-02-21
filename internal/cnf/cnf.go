@@ -2,7 +2,6 @@ package cnf
 
 import (
 	"flag"
-	"github.com/eampleev23/diploma/internal/mlg"
 	"os"
 	"time"
 )
@@ -16,7 +15,7 @@ type Config struct {
 	TokenExp    time.Duration
 }
 
-func NewConfig(l *mlg.ZapLog) (*Config, error) {
+func NewConfig() (*Config, error) {
 	config := &Config{
 		TLimitQuery: 20 * time.Second, //nolint:gomnd //20 секунд максимальнео время на запрос к бд
 		TokenExp:    time.Hour * 1344, //nolint:gomnd //2 месяца не истекает авторизация
@@ -32,7 +31,7 @@ func (c *Config) SetValues() error {
 	// регистрируем переменную flagRunAddr как аргумент -a со значением по умолчанию :8080
 	flag.StringVar(&c.RanAddr, "a", "localhost:8080", "address and port to run server")
 	// регистрируем уровень логирования
-	flag.StringVar(&c.LogLevel, "l", "info", "logger level")
+	flag.StringVar(&c.LogLevel, "l", "debug", "logger level")
 	// принимаем строку подключения к базе данных
 	flag.StringVar(&c.DBDSN, "d", "", "postgres database")
 	// принимаем секретный ключ сервера для авторизации

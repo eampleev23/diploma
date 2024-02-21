@@ -2,7 +2,7 @@ package models
 
 // User - модель пользователя
 type User struct {
-	ID       string `json:"id"`
+	ID       int    `json:"id"`
 	Login    string `json:"login"`
 	Password string `json:"password"`
 }
