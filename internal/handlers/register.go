@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/eampleev23/diploma/internal/models"
 	"go.uber.org/zap"
 	"net/http"
@@ -19,11 +18,14 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// проверяем, не авторизован ли пользователь, отправивший запрос
-	userID, isAuth, err := h.GetUserID(r)
-	// ...
-	fmt.Println("userID=", userID)
-	fmt.Println("isAuth=", isAuth)
+	//проверяем, не авторизован ли пользователь, отправивший запрос
+	_, isAuth, err := h.GetUserID(r)
+	h.l.ZL.Debug("isAuth", zap.Bool("auth", isAuth))
+	if isAuth {
+		h.l.ZL.Error("already authorized user is going to register")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	// Получаем данные в случае корректного запроса.
 	var req models.UserRegReq
@@ -46,6 +48,10 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 	// а в самом начале надо проверить на куку, возможно он уже авторизован и тогда надо отправлять
 	// внуреннюю ошибку сервера
 
-	fmt.Println("newUser=", newUser)
-
+	err = h.au.SetNewCookie(w, newUser.ID)
+	if err != nil {
+		h.l.ZL.Debug("Not authorize after success register", zap.Error(err))
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 }

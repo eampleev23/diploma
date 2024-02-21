@@ -28,13 +28,7 @@ func NewHandlers(s store.Store, c *cnf.Config, l *mlg.ZapLog, au myauth.Authoriz
 }
 
 func (h *Handlers) GetUserID(r *http.Request) (userID int, isAuth bool, err error) {
-	userIDCtx, ok := r.Context().Value(keyUserIDCtx).(int)
-	if !ok {
-		return 0, false, fmt.Errorf("userIDCtx is not set: %w", err)
-	}
-	if userIDCtx != 0 {
-		return userIDCtx, false, nil
-	}
+	h.l.ZL.Debug("GetUserID started.. ")
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		return 0, false, fmt.Errorf("token not set in cookie: %w", err)

@@ -30,7 +30,7 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new logger: %w", err)
 	}
-	mL.ZL.Info("Logger success created..")
+	mL.ZL.Debug("Logger success created..")
 
 	au, err := myauth.Initialize(c, mL)
 	if err != nil {
@@ -59,7 +59,6 @@ func run() error {
 	mL.ZL.Info("Running server", zap.String("address", c.RanAddr))
 	r := chi.NewRouter()
 	r.Use(mL.RequestLogger)
-	//r.Use(au.Auth)
 	r.Post("/api/user/register", h.Register)
 	err = http.ListenAndServe(c.RanAddr, r)
 	if err != nil {

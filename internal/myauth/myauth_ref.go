@@ -66,7 +66,7 @@ func (au *Authorizer) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-func (au *Authorizer) setNewCookie(w http.ResponseWriter, userID int) (int, error) {
+func (au *Authorizer) SetNewCookie(w http.ResponseWriter, userID int) (err error) {
 
 	au.l.ZL.Debug("setNewCookie got userID", zap.Int("userID", userID))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
@@ -79,14 +79,14 @@ func (au *Authorizer) setNewCookie(w http.ResponseWriter, userID int) (int, erro
 	})
 	tokenString, err := token.SignedString([]byte(au.c.SecretKey))
 	if err != nil {
-		return userID, fmt.Errorf("ошибка при генерации нового токена %w", err)
+		return fmt.Errorf("token.SignedString fail.. %w", err)
 	}
 	cookie := http.Cookie{
 		Name:  "token",
 		Value: tokenString,
 	}
 	http.SetCookie(w, &cookie)
-	return userID, nil
+	return nil
 }
 
 // Claims описывает утверждения, хранящиеся в токене + добавляет кастомное UserID.

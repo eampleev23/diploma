@@ -21,6 +21,6 @@ func NewStorage(c *cnf.Config, l *mlg.ZapLog) (Store, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error creating new db store: %w", err)
 	}
-	l.ZL.Info("DB store created success..")
+	l.ZL.Debug("DB store created success..")
 	return s, nil
 }
