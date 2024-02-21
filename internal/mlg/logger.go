@@ -92,7 +92,7 @@ func (zl *ZapLog) RequestLogger(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), KeyLoggerCtx, zl)
 		next.ServeHTTP(&lw, r.WithContext(ctx))
 		duration := time.Since(start)
-		zl.ZL.Debug("got incoming HTTP request",
+		zl.ZL.Info("got incoming HTTP request",
 			zap.String("path", r.URL.Path),
 			zap.String("method", r.Method),
 			zap.String("header", r.Header.Get("content-type")),
