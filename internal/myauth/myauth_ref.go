@@ -49,9 +49,9 @@ func (au *Authorizer) Auth(next http.Handler) http.Handler {
 			logger.ZL.Debug("No cookie", zap.String("err", err.Error()))
 			// Cookie не установлена, устанавливаем
 			//newRandomUserID, err := au.setNewCookie(w)
-			if err != nil {
-				logger.ZL.Info("Error setting cookie:", zap.String("err", err.Error()))
-			}
+			//if err != nil {
+			//	logger.ZL.Info("Error setting cookie:", zap.String("err", err.Error()))
+			//}
 			//logger.ZL.Debug("Success setted cookie", zap.Int("newRandomUserId", newRandomUserID))
 			//ctx := context.WithValue(r.Context(), KeyUserIDCtx, newRandomUserID)
 			//logger.ZL.Debug("Передали newRandomUserID", zap.Int("newRandomUserID", newRandomUserID))
