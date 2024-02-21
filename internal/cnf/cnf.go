@@ -39,7 +39,7 @@ func (c *Config) SetValues() error {
 	// парсим переданные серверу аргументы в зарегестрированные переменные
 	flag.Parse()
 
-	if envRunAddr := os.Getenv("SERVER_ADDRESS"); envRunAddr != "" {
+	if envRunAddr := os.Getenv("RUN_ADDRESS"); envRunAddr != "" {
 		c.RanAddr = envRunAddr
 	}
 
