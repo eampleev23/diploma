@@ -47,7 +47,7 @@ func (c *Config) SetValues() error {
 		c.LogLevel = envLogLevel
 	}
 
-	if envDBDSN := os.Getenv("DATABASE_DSN"); envDBDSN != "" {
+	if envDBDSN := os.Getenv("DATABASE_URI"); envDBDSN != "" {
 		c.DBDSN = envDBDSN
 	}
 	if envSecretKey := os.Getenv("SECRET_KEY"); envSecretKey != "" {
