@@ -61,6 +61,7 @@ func run() error {
 	r.Use(mL.RequestLogger)
 	r.Post("/api/user/register", h.Register)
 	r.Post("/api/user/login", h.Authentication)
+	r.Post("/api/user/orders", h.UploadOrder)
 	err = http.ListenAndServe(c.RanAddr, r)
 	if err != nil {
 		return fmt.Errorf("ошибка ListenAndServe: %w", err)
