@@ -14,6 +14,9 @@ type Store interface {
 	DBConnClose() (err error)
 	// InsertUser добавляет нового пользователя или возвращает ошибку о конфликте данных
 	InsertUser(ctx context.Context, userRegReq models.UserRegReq) (userBack models.User, err error)
+	// GetUserByLoginAndPassword проверяет по логину и паролю зарегистрирован ли такой пользователь и если да,
+	//то возвращает модель пользователя
+	GetUserByLoginAndPassword(ctx context.Context, userLoginReq models.UserLoginReq) (userBack models.User, err error)
 }
 
 func NewStorage(c *cnf.Config, l *mlg.ZapLog) (Store, error) {
