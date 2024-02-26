@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"go.uber.org/zap"
 	"net/http"
 	"strings"
@@ -29,5 +28,12 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.l.ZL.Debug("isAuth", zap.Bool("auth", isAuth))
-	fmt.Println(userID)
+	h.l.ZL.Debug("", zap.Int("userID", userID))
+	textPlainContent, err := h.serv.GetTextPlain(r)
+	if err != nil {
+		h.l.ZL.Error("GetTextPlain fail")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	h.l.ZL.Debug("", zap.String("textPlainContent", textPlainContent))
 }

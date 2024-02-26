@@ -6,6 +6,7 @@ import (
 	"github.com/eampleev23/diploma/internal/handlers"
 	"github.com/eampleev23/diploma/internal/mlg"
 	"github.com/eampleev23/diploma/internal/myauth"
+	"github.com/eampleev23/diploma/internal/services"
 	"github.com/eampleev23/diploma/internal/store"
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
@@ -50,8 +51,8 @@ func run() error {
 			}
 		}()
 	}
-
-	h, err := handlers.NewHandlers(s, c, mL, *au)
+	serv := services.NewServices(s, c, mL, *au)
+	h, err := handlers.NewHandlers(s, c, mL, *au, *serv)
 	if err != nil {
 		return fmt.Errorf("handlers constructor's error: %w", err)
 	}
