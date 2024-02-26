@@ -36,4 +36,11 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.l.ZL.Debug("", zap.String("textPlainContent", textPlainContent))
+	// Далее проверяем алгоритмом луна и возвращаем 422 если не верный формат номера заказа.
+	err = h.serv.MoonCheck(textPlainContent)
+	if err != nil {
+		h.l.ZL.Debug("MoonTest fail", zap.Error(err))
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
 }
