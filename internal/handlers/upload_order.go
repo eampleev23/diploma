@@ -1,9 +1,11 @@
 package handlers
 
 import (
-	"go.uber.org/zap"
 	"net/http"
 	"strings"
+
+	"github.com/eampleev23/diploma/internal/models"
+	"go.uber.org/zap"
 )
 
 // UploadOrder добавляет новый заказ в систему (заявка на получение баллов лояльности)
@@ -44,6 +46,12 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.l.ZL.Debug("Moon test success..")
-	// Далее проверяем нет ли заказа с таким номером у этого пользователя
-	
+	newOrder := models.Order{Number: textPlainContent, UserId: userID}
+	err = h.serv.AddOrder(r.Context(), newOrder)
+	if err != nil {
+		h.l.ZL.Error("AddOrder fail", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }

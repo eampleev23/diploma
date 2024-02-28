@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/eampleev23/diploma/internal/models"
-	"go.uber.org/zap"
 	"net/http"
 	"strings"
+
+	"github.com/eampleev23/diploma/internal/models"
+	"go.uber.org/zap"
 )
 
 // Register регистрирует нового пользователя

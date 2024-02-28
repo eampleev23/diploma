@@ -1,12 +1,13 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/mlg"
 	"github.com/eampleev23/diploma/internal/myauth"
 	"github.com/eampleev23/diploma/internal/services"
 	"github.com/eampleev23/diploma/internal/store"
-	"net/http"
 )
 
 var keyUserIDCtx myauth.Key = myauth.KeyUserIDCtx

@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/handlers"
 	"github.com/eampleev23/diploma/internal/mlg"
@@ -10,8 +13,6 @@ import (
 	"github.com/eampleev23/diploma/internal/store"
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
-	"log"
-	"net/http"
 )
 
 func main() {

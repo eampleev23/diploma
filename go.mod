@@ -5,6 +5,7 @@ go 1.21
 require (
 	github.com/go-chi/chi/v5 v5.0.11
 	github.com/golang-jwt/jwt/v4 v4.4.2
+	github.com/golang-migrate/migrate v3.5.4+incompatible
 	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
 	github.com/jackc/pgx/v5 v5.5.1

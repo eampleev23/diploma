@@ -2,10 +2,11 @@ package services
 
 import (
 	"fmt"
-	"go.uber.org/zap"
 	"log"
 	"strconv"
 	"unicode"
+
+	"go.uber.org/zap"
 )
 
 func (serv *Services) MoonCheck(inpStr string) (err error) {

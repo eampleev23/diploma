@@ -3,13 +3,14 @@ package myauth
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
+	"time"
+
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/mlg"
 	"github.com/golang-jwt/jwt/v4"
 	"go.uber.org/zap"
-	"log"
-	"net/http"
-	"time"
 )
 
 type Authorizer struct {
