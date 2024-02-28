@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+	"github.com/eampleev23/diploma/internal/store"
 	"net/http"
 	"strings"
 
@@ -47,11 +49,18 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 	}
 	h.l.ZL.Debug("Moon test success..")
 	newOrder := models.Order{Number: textPlainContent, UserId: userID}
-	err = h.serv.AddOrder(r.Context(), newOrder)
-	if err != nil {
-		h.l.ZL.Error("AddOrder fail", zap.Error(err))
-		w.WriteHeader(http.StatusInternalServerError)
+	_, err = h.serv.AddOrder(r.Context(), newOrder)
+	if err != nil && errors.Is(err, store.ErrConflict) {
+		h.l.ZL.Debug("this order already exists")
+		confUserID, _ := h.serv.GetUserIdByOrderNumber(r.Context(), textPlainContent)
+		if confUserID == userID {
+			// Заказ был создан текущим пользователем
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		// Заказ был загружен другим пользователем
+		w.WriteHeader(http.StatusConflict)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusAccepted)
 }

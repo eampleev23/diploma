@@ -20,6 +20,7 @@ type Store interface {
 	GetUserByLoginAndPassword(ctx context.Context, userLoginReq models.UserLoginReq) (userBack models.User, err error)
 	// AddNewOrder добавляет новый заказ
 	AddNewOrder(ctx context.Context, newOrder models.Order) (orderBack models.Order, err error)
+	GetUserIDByOrder(ctx context.Context, orderNumber string) (userID int, err error)
 }
 
 func NewStorage(c *cnf.Config, l *mlg.ZapLog) (Store, error) {
