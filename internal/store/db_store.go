@@ -6,11 +6,12 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
+
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/mlg"
 	"github.com/eampleev23/diploma/internal/models"
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5/pgconn"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -91,4 +92,31 @@ func (D DBStore) GetUserByLoginAndPassword(ctx context.Context, userLoginReq mod
 		return userBack, fmt.Errorf("faild to get user by login and password like this %w", err)
 	}
 	return userBack, nil
+}
+
+func (D DBStore) AddNewOrder(ctx context.Context, newOrder models.Order) (orderBack models.Order, err error) {
+	orderBack = models.Order{}
+	err = D.dbConn.QueryRow("INSERT INTO orders (number, customer_id) VALUES($1, $2) RETURNING id, number, customer_id",
+		newOrder.Number,
+		newOrder.UserID).Scan(
+		&orderBack.ID,
+		&orderBack.Number,
+		&orderBack.UserID)
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
+		err = ErrConflict
+	}
+	return orderBack, err
+}
+
+func (D DBStore) GetUserIDByOrder(ctx context.Context, orderNumber string) (userID int, err error) {
+	row := D.dbConn.QueryRowContext(ctx,
+		`SELECT customer_id FROM orders WHERE number = $1 LIMIT 1`,
+		orderNumber,
+	)
+	err = row.Scan(&userID) // Разбираем результат
+	if err != nil {
+		return userID, fmt.Errorf("faild to get user id by order's number %w", err)
+	}
+	return userID, nil
 }

@@ -2,15 +2,17 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/handlers"
 	"github.com/eampleev23/diploma/internal/mlg"
 	"github.com/eampleev23/diploma/internal/myauth"
+	"github.com/eampleev23/diploma/internal/services"
 	"github.com/eampleev23/diploma/internal/store"
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
-	"log"
-	"net/http"
 )
 
 func main() {
@@ -50,8 +52,8 @@ func run() error {
 			}
 		}()
 	}
-
-	h, err := handlers.NewHandlers(s, c, mL, *au)
+	serv := services.NewServices(s, c, mL, *au)
+	h, err := handlers.NewHandlers(s, c, mL, *au, *serv)
 	if err != nil {
 		return fmt.Errorf("handlers constructor's error: %w", err)
 	}
@@ -61,6 +63,7 @@ func run() error {
 	r.Use(mL.RequestLogger)
 	r.Post("/api/user/register", h.Register)
 	r.Post("/api/user/login", h.Authentication)
+	r.Post("/api/user/orders", h.UploadOrder)
 	err = http.ListenAndServe(c.RanAddr, r)
 	if err != nil {
 		return fmt.Errorf("ошибка ListenAndServe: %w", err)
