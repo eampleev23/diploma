@@ -43,4 +43,5 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
+	h.l.ZL.Debug("Moon test success..")
 }
