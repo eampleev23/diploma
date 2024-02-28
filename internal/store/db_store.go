@@ -96,7 +96,12 @@ func (D DBStore) GetUserByLoginAndPassword(ctx context.Context, userLoginReq mod
 
 func (D DBStore) AddNewOrder(ctx context.Context, newOrder models.Order) (orderBack models.Order, err error) {
 	orderBack = models.Order{}
-	err = D.dbConn.QueryRow("INSERT INTO orders (number, customer_id) VALUES($1, $2) RETURNING id, number, customer_id", newOrder.Number, newOrder.UserId).Scan(&orderBack.ID, &orderBack.Number, &orderBack.UserId)
+	err = D.dbConn.QueryRow("INSERT INTO orders (number, customer_id) VALUES($1, $2) RETURNING id, number, customer_id",
+		newOrder.Number,
+		newOrder.UserID).Scan(
+		&orderBack.ID,
+		&orderBack.Number,
+		&orderBack.UserID)
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
 		err = ErrConflict

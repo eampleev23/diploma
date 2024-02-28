@@ -48,11 +48,11 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.l.ZL.Debug("Moon test success..")
-	newOrder := models.Order{Number: textPlainContent, UserId: userID}
+	newOrder := models.Order{Number: textPlainContent, UserID: userID}
 	_, err = h.serv.AddOrder(r.Context(), newOrder)
 	if err != nil && errors.Is(err, store.ErrConflict) {
 		h.l.ZL.Debug("this order already exists")
-		confUserID, _ := h.serv.GetUserIdByOrderNumber(r.Context(), textPlainContent)
+		confUserID, _ := h.serv.GetUserIDByOrderNumber(r.Context(), textPlainContent)
 		if confUserID == userID {
 			// Заказ был создан текущим пользователем
 			w.WriteHeader(http.StatusOK)
