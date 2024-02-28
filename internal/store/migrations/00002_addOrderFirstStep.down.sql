@@ -1,0 +1,11 @@
+BEGIN TRANSACTION;
+
+ALTER TABLE orders
+    ALTER COLUMN number TYPE NUMERIC;
+ALTER TABLE orders
+    DROP CONSTRAINT IF EXISTS order_number_unique;
+ALTER TABLE orders
+    DROP COLUMN IF EXISTS user_id;
+
+
+COMMIT;

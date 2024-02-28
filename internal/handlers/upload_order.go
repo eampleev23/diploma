@@ -44,4 +44,6 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.l.ZL.Debug("Moon test success..")
+	// Далее проверяем нет ли заказа с таким номером у этого пользователя
+	
 }
