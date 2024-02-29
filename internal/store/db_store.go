@@ -73,7 +73,17 @@ var ErrConflict = errors.New("data conflict")
 // InsertUser занимается непосредственно запросом вставки строки в бд.
 func (d DBStore) InsertUser(ctx context.Context, userRegReq models.UserRegReq) (newUser models.User, err error) {
 	newUser = models.User{}
-	err = d.dbConn.QueryRow("INSERT INTO users (login, password) VALUES($1, $2) RETURNING id, login, password", userRegReq.Login, userRegReq.Password).Scan(&newUser.ID, &newUser.Login, &newUser.Password)
+	err = d.dbConn.QueryRow( //nolint:execinquery // нужен скан
+		`INSERT INTO
+    users (login, password)
+	VALUES($1, $2)
+	RETURNING
+	    id, login, password`,
+		userRegReq.Login,
+		userRegReq.Password).Scan(
+		&newUser.ID,
+		&newUser.Login,
+		&newUser.Password)
 	// Проверяем, что ошибка сигнализирует о потенциальном нарушении целостности данных
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
@@ -81,7 +91,12 @@ func (d DBStore) InsertUser(ctx context.Context, userRegReq models.UserRegReq) (
 	}
 	return newUser, err
 }
-func (d DBStore) GetUserByLoginAndPassword(ctx context.Context, userLoginReq models.UserLoginReq) (userBack models.User, err error) {
+func (d DBStore) GetUserByLoginAndPassword(
+	ctx context.Context,
+	userLoginReq models.UserLoginReq,
+) (
+	userBack models.User,
+	err error) {
 	userBack = models.User{}
 	row := d.dbConn.QueryRowContext(ctx,
 		`SELECT id, login, password FROM users WHERE login = $1 AND password = $2 LIMIT 1`,
@@ -97,7 +112,12 @@ func (d DBStore) GetUserByLoginAndPassword(ctx context.Context, userLoginReq mod
 
 func (d DBStore) AddNewOrder(ctx context.Context, newOrder models.Order) (orderBack models.Order, err error) {
 	orderBack = models.Order{}
-	err = d.dbConn.QueryRow("INSERT INTO orders (number, customer_id) VALUES($1, $2) RETURNING id, number, customer_id",
+	err = d.dbConn.QueryRow( //nolint:execinquery // нужен скан
+		`INSERT INTO orders
+    			(number, customer_id)
+				VALUES($1, $2)
+				RETURNING
+    			id, number, customer_id`,
 		newOrder.Number,
 		newOrder.UserID).Scan(
 		&orderBack.ID,
