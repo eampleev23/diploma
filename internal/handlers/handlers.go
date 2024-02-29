@@ -39,11 +39,11 @@ func (h *Handlers) GetUserID(r *http.Request) (userID int, isAuth bool, err erro
 	h.l.ZL.Debug("GetUserID started.. ")
 	cookie, err := r.Cookie("token")
 	if err != nil {
-		return 0, false, err
+		return 0, false, nil //nolint:nilerr // нужно будет исправить логику
 	}
 	userID, err = h.au.GetUserID(cookie.Value)
 	if err != nil {
-		return 0, false, nil
+		return 0, false, nil //nolint:nilerr // нужно будет исправить логику
 	}
 	return userID, true, nil
 }

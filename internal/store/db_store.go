@@ -6,6 +6,7 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 
 	"github.com/eampleev23/diploma/internal/cnf"
@@ -23,8 +24,8 @@ type DBStore struct {
 	l      *mlg.ZapLog
 }
 
-func (D DBStore) DBConnClose() (err error) {
-	if err := D.dbConn.Close(); err != nil {
+func (d DBStore) DBConnClose() (err error) {
+	if err := d.dbConn.Close(); err != nil {
 		return fmt.Errorf("failed to properly close the DB connection %w", err)
 	}
 	return nil

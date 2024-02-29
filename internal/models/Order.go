@@ -1,8 +1,8 @@
 package models
 
-// Order - модель заказа
+// Order - модель заказа.
 type Order struct {
-	ID     int    `json:"id"`
 	Number string `json:"number"`
+	ID     int    `json:"id"`
 	UserID int    `json:"user_id"`
 }

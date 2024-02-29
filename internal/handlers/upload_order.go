@@ -2,15 +2,16 @@ package handlers
 
 import (
 	"errors"
-	"github.com/eampleev23/diploma/internal/store"
 	"net/http"
 	"strings"
+
+	"github.com/eampleev23/diploma/internal/store"
 
 	"github.com/eampleev23/diploma/internal/models"
 	"go.uber.org/zap"
 )
 
-// UploadOrder добавляет новый заказ в систему (заявка на получение баллов лояльности)
+// UploadOrder добавляет новый заказ в систему (заявка на получение баллов лояльности).
 func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 	// Проверяем формат запроса.
 	contentType := r.Header.Get("Content-Type")
