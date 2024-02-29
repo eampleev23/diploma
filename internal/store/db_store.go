@@ -71,9 +71,9 @@ func runMigrations(dsn string) error {
 var ErrConflict = errors.New("data conflict")
 
 // InsertUser занимается непосредственно запросом вставки строки в бд.
-func (D DBStore) InsertUser(ctx context.Context, userRegReq models.UserRegReq) (newUser models.User, err error) {
+func (d DBStore) InsertUser(ctx context.Context, userRegReq models.UserRegReq) (newUser models.User, err error) {
 	newUser = models.User{}
-	err = D.dbConn.QueryRow("INSERT INTO users (login, password) VALUES($1, $2) RETURNING id, login, password", userRegReq.Login, userRegReq.Password).Scan(&newUser.ID, &newUser.Login, &newUser.Password)
+	err = d.dbConn.QueryRow("INSERT INTO users (login, password) VALUES($1, $2) RETURNING id, login, password", userRegReq.Login, userRegReq.Password).Scan(&newUser.ID, &newUser.Login, &newUser.Password)
 	// Проверяем, что ошибка сигнализирует о потенциальном нарушении целостности данных
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
@@ -81,9 +81,9 @@ func (D DBStore) InsertUser(ctx context.Context, userRegReq models.UserRegReq) (
 	}
 	return newUser, err
 }
-func (D DBStore) GetUserByLoginAndPassword(ctx context.Context, userLoginReq models.UserLoginReq) (userBack models.User, err error) {
+func (d DBStore) GetUserByLoginAndPassword(ctx context.Context, userLoginReq models.UserLoginReq) (userBack models.User, err error) {
 	userBack = models.User{}
-	row := D.dbConn.QueryRowContext(ctx,
+	row := d.dbConn.QueryRowContext(ctx,
 		`SELECT id, login, password FROM users WHERE login = $1 AND password = $2 LIMIT 1`,
 		userLoginReq.Login,
 		userLoginReq.Password,
@@ -95,9 +95,9 @@ func (D DBStore) GetUserByLoginAndPassword(ctx context.Context, userLoginReq mod
 	return userBack, nil
 }
 
-func (D DBStore) AddNewOrder(ctx context.Context, newOrder models.Order) (orderBack models.Order, err error) {
+func (d DBStore) AddNewOrder(ctx context.Context, newOrder models.Order) (orderBack models.Order, err error) {
 	orderBack = models.Order{}
-	err = D.dbConn.QueryRow("INSERT INTO orders (number, customer_id) VALUES($1, $2) RETURNING id, number, customer_id",
+	err = d.dbConn.QueryRow("INSERT INTO orders (number, customer_id) VALUES($1, $2) RETURNING id, number, customer_id",
 		newOrder.Number,
 		newOrder.UserID).Scan(
 		&orderBack.ID,
@@ -110,8 +110,8 @@ func (D DBStore) AddNewOrder(ctx context.Context, newOrder models.Order) (orderB
 	return orderBack, err
 }
 
-func (D DBStore) GetUserIDByOrder(ctx context.Context, orderNumber string) (userID int, err error) {
-	row := D.dbConn.QueryRowContext(ctx,
+func (d DBStore) GetUserIDByOrder(ctx context.Context, orderNumber string) (userID int, err error) {
+	row := d.dbConn.QueryRowContext(ctx,
 		`SELECT customer_id FROM orders WHERE number = $1 LIMIT 1`,
 		orderNumber,
 	)
