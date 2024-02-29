@@ -16,7 +16,7 @@ type Store interface {
 	// InsertUser добавляет нового пользователя или возвращает ошибку о конфликте данных
 	InsertUser(ctx context.Context, userRegReq models.UserRegReq) (userBack models.User, err error)
 	// GetUserByLoginAndPassword проверяет по логину и паролю зарегистрирован ли такой пользователь и если да,
-	//то возвращает модель пользователя
+	// то возвращает модель пользователя
 	GetUserByLoginAndPassword(ctx context.Context, userLoginReq models.UserLoginReq) (userBack models.User, err error)
 	// AddNewOrder добавляет новый заказ
 	AddNewOrder(ctx context.Context, newOrder models.Order) (orderBack models.Order, err error)

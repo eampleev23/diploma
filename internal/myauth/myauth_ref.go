@@ -35,7 +35,7 @@ const (
 	KeyUserIDCtx Key = "user_id_ctx"
 )
 
-// Auth мидлвар, который проверяет авторизацию
+// Auth мидлвар, который проверяет авторизацию.
 func (au *Authorizer) Auth(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		_, err := r.Cookie("token")
@@ -48,15 +48,6 @@ func (au *Authorizer) Auth(next http.Handler) http.Handler {
 				return
 			}
 			logger.ZL.Debug("No cookie", zap.String("err", err.Error()))
-			// Cookie не установлена, устанавливаем
-			//newRandomUserID, err := au.setNewCookie(w)
-			//if err != nil {
-			//	logger.ZL.Info("Error setting cookie:", zap.String("err", err.Error()))
-			//}
-			//logger.ZL.Debug("Success setted cookie", zap.Int("newRandomUserId", newRandomUserID))
-			//ctx := context.WithValue(r.Context(), KeyUserIDCtx, newRandomUserID)
-			//logger.ZL.Debug("Передали newRandomUserID", zap.Int("newRandomUserID", newRandomUserID))
-			//next.ServeHTTP(w, r.WithContext(ctx))
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -68,14 +59,13 @@ func (au *Authorizer) Auth(next http.Handler) http.Handler {
 }
 
 func (au *Authorizer) SetNewCookie(w http.ResponseWriter, userID int) (err error) {
-
 	au.l.ZL.Debug("setNewCookie got userID", zap.Int("userID", userID))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			// Когда создан токен
+			// Когда создан токен.
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(au.c.TokenExp)),
 		},
-		// Собственное утверждение
+		// Собственное утверждение.
 		UserID: userID,
 	})
 	tokenString, err := token.SignedString([]byte(au.c.SecretKey))

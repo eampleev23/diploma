@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Register регистрирует нового пользователя
+// Register регистрирует нового пользователя.
 func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 	// Проверяем формат запроса
 	contentType := r.Header.Get("Content-Type")
@@ -19,7 +19,7 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//проверяем, не авторизован ли пользователь, отправивший запрос
+	// Проверяем, не авторизован ли пользователь, отправивший запрос.
 	_, isAuth, err := h.GetUserID(r)
 	if err != nil {
 		h.l.ZL.Error("GetUserID fail")

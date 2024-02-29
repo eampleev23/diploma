@@ -50,11 +50,11 @@ func (serv *Services) forEven(numbers []int64) (err error) {
 	serv.l.ZL.Debug("forEven start..")
 	// Перебираем четные цифры в номере
 	for i := 0; i < len(numbers); i += 2 {
-		//serv.l.ZL.Debug("", zap.Int64("v", numbers[i]))
+		// serv.l.ZL.Debug("", zap.Int64("v", numbers[i]))
 		// В резалт записываем произвидение четной цифры и 2
-		result := numbers[i] * 2
+		result := numbers[i] * 2 //nolint:gomnd //такой алгоритм луны
 		// Если произведение больш 9
-		if result > 9 {
+		if result > 9 { //nolint:gomnd //такой алгоритм луны
 			// Значит складывам 2 разряда результата и записываем вместо текущего значения
 			numbers[i] = serv.sum2Places(result)
 			// Иначе просто записываем резалт
@@ -82,9 +82,9 @@ func (serv *Services) forOdd(numbers []int64) (err error) {
 	// Значит перебираем четные номера
 	serv.l.ZL.Debug("forOdd start..")
 	for i := 1; i < len(numbers); i += 2 {
-		//serv.l.ZL.Debug("", zap.Int64("v", numbers[i]))
-		result := numbers[i] * 2
-		if result > 9 {
+		// serv.l.ZL.Debug("", zap.Int64("v", numbers[i]))
+		result := numbers[i] * 2 //nolint:gomnd //такой алгоритм луны
+		if result > 9 {          //nolint:gomnd //такой алгоритм луны
 			// Значит складывам 2 разряда результата и записываем вместо текущего значения
 			numbers[i] = serv.sum2Places(result)
 		} else {
@@ -106,20 +106,20 @@ func (serv *Services) forOdd(numbers []int64) (err error) {
 func (serv *Services) sum2Places(number int64) (result int64) {
 	serv.l.ZL.Debug("sum2Places/ got a number", zap.Int64("number", number))
 	numberString := strconv.FormatInt(number, 10)
-	//serv.l.ZL.Debug("sum2Places/ преобразовали в строку", zap.String("numberString", numberString))
+	// serv.l.ZL.Debug("sum2Places/ преобразовали в строку", zap.String("numberString", numberString))
 	numberRunes := []rune(numberString)
-	//serv.l.ZL.Debug("sum2Places/ преобразовали в массив рун")
+	// serv.l.ZL.Debug("sum2Places/ преобразовали в массив рун")
 	result = 0
-	//serv.l.ZL.Debug("sum2Places/ в result int64 присвоили 0", zap.Int64("result", result))
-	//serv.l.ZL.Debug("sum2Places/ начнаем перебирать каждую руну..")
+	// serv.l.ZL.Debug("sum2Places/ в result int64 присвоили 0", zap.Int64("result", result))
+	// serv.l.ZL.Debug("sum2Places/ начнаем перебирать каждую руну..")
 	for i, digit := range numberRunes {
 		serv.l.ZL.Debug("sum2Places/ итерация ", zap.Int("iter #", i+1))
-		//serv.l.ZL.Debug("", zap.String("sum2Places/ iter/ берем руну:", string(digit)))
+		// serv.l.ZL.Debug("", zap.String("sum2Places/ iter/ берем руну:", string(digit)))
 		// Преобразуем руну в int64
 		digitNumber, _ := strconv.ParseInt(string(digit), 10, 64)
 		// Прибавляем в result
 		result += digitNumber
-		//serv.l.ZL.Debug("sum2Places/ в result int64 после итерации", zap.Int64("result", result))
+		// serv.l.ZL.Debug("sum2Places/ в result int64 после итерации", zap.Int64("result", result))
 	}
 	serv.l.ZL.Debug("sum2Places/ отправляем результат", zap.Int64("result", result))
 	return result

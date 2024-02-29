@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Authentication авторизует зарегистрированного пользователя
+// Authentication авторизует зарегистрированного пользователя.
 func (h *Handlers) Authentication(w http.ResponseWriter, r *http.Request) {
 	// Проверяем формат запроса
 	contentType := r.Header.Get("Content-Type")
@@ -27,7 +27,7 @@ func (h *Handlers) Authentication(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	//проверяем, не авторизован ли пользователь, отправивший запрос
+	// Проверяем, не авторизован ли пользователь, отправивший запрос.
 	userIDAlreadyAuth, isAuth, err := h.GetUserID(r)
 	if err != nil {
 		h.l.ZL.Error("GetUserID fail")
