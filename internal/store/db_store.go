@@ -160,7 +160,14 @@ func (d DBStore) GetOrdersByUserID(ctx context.Context, userID int) (orders []mo
 	for rows.Next() {
 		var v models.Order
 		err = rows.Scan(&v.ID, &v.Number, &v.CustomerID, &v.Status, &v.Accrual, &v.UploadedAt)
-		d.l.ZL.Debug("Got order", zap.String("v.Number", v.Number))
+		d.l.ZL.Debug("got order",
+			zap.String("number", v.Number),
+			zap.Time("uploaded at", v.UploadedAt),
+			zap.Int("customer", v.CustomerID),
+			zap.String("status", v.Status),
+			zap.Int("accrual", v.Accrual),
+			zap.Int("id", v.ID),
+		)
 		orders = append(orders, v)
 	}
 	return orders, nil
