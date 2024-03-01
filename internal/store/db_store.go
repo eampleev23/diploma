@@ -114,12 +114,13 @@ func (d DBStore) AddNewOrder(ctx context.Context, newOrder models.Order) (orderB
 	orderBack = models.Order{}
 	err = d.dbConn.QueryRow( //nolint:execinquery // нужен скан
 		`INSERT INTO orders
-    			(number, customer_id)
-				VALUES($1, $2)
+    			(number, customer_id, status)
+				VALUES($1, $2, $3)
 				RETURNING
     			id, number, customer_id`,
 		newOrder.Number,
-		newOrder.UserID).Scan(
+		newOrder.UserID,
+		newOrder.Status).Scan(
 		&orderBack.ID,
 		&orderBack.Number,
 		&orderBack.UserID)
