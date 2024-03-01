@@ -50,9 +50,9 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 	}
 	h.l.ZL.Debug("Moon test success..")
 	newOrder := models.Order{
-		Number: textPlainContent,
-		UserID: userID,
-		Status: "NEW",
+		Number:     textPlainContent,
+		CustomerID: userID,
+		Status:     "NEW",
 	}
 	_, err = h.serv.AddOrder(r.Context(), newOrder)
 	if err != nil && errors.Is(err, store.ErrConflict) {

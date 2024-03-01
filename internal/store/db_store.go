@@ -6,6 +6,7 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"go.uber.org/zap"
 
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 
@@ -119,11 +120,11 @@ func (d DBStore) AddNewOrder(ctx context.Context, newOrder models.Order) (orderB
 				RETURNING
     			id, number, customer_id`,
 		newOrder.Number,
-		newOrder.UserID,
+		newOrder.CustomerID,
 		newOrder.Status).Scan(
 		&orderBack.ID,
 		&orderBack.Number,
-		&orderBack.UserID)
+		&orderBack.CustomerID)
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
 		err = ErrConflict
@@ -145,5 +146,22 @@ func (d DBStore) GetUserIDByOrder(ctx context.Context, orderNumber string) (user
 
 func (d DBStore) GetOrdersByUserID(ctx context.Context, userID int) (orders []models.Order, err error) {
 	d.l.ZL.Debug("db_store / GetOrdersByUserID started..")
+	rows, err := d.dbConn.QueryContext(
+		ctx,
+		`SELECT 
+    				id,number,customer_id,status,accrual,uploaded_at
+					FROM
+					    orders
+					WHERE
+					customer_id = $1`, userID)
+	if err != nil {
+		return nil, fmt.Errorf("not get orders for customer by customer_id %w", err)
+	}
+	for rows.Next() {
+		var v models.Order
+		err = rows.Scan(&v.ID, &v.Number, &v.CustomerID, &v.Status, &v.Accrual, &v.UploadedAt)
+		d.l.ZL.Debug("Got order", zap.String("v.Number", v.Number))
+		orders = append(orders, v)
+	}
 	return orders, nil
 }
