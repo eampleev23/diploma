@@ -142,3 +142,8 @@ func (d DBStore) GetUserIDByOrder(ctx context.Context, orderNumber string) (user
 	}
 	return userID, nil
 }
+
+func (d DBStore) GetOrdersByUserID(ctx context.Context, userID int) (orders []models.Order, err error) {
+	d.l.ZL.Debug("db_store / GetOrdersByUserID started..")
+	return orders, nil
+}

@@ -24,4 +24,6 @@ func (h *Handlers) GetOrders(w http.ResponseWriter, r *http.Request) {
 	}
 	h.l.ZL.Debug("Authorized user:", zap.Int("userID", userID))
 
+	_, err = h.serv.GetOrdersByUserID(r.Context(), userID)
+
 }
