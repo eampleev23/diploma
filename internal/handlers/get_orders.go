@@ -24,6 +24,16 @@ func (h *Handlers) GetOrders(w http.ResponseWriter, r *http.Request) {
 	}
 	h.l.ZL.Debug("Authorized user:", zap.Int("userID", userID))
 
-	_, err = h.serv.GetOrdersByUserID(r.Context(), userID)
+	orders, err := h.serv.GetOrdersByUserID(r.Context(), userID)
+	if err != nil {
+		h.l.ZL.Error("GetOrdersByUserID fail")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if len(orders) == 0 {
+		h.l.ZL.Debug("No data for response")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 
 }
