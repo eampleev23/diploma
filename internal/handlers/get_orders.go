@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
+	"github.com/eampleev23/diploma/internal/models"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -35,5 +37,16 @@ func (h *Handlers) GetOrders(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-
+	enc := json.NewEncoder(w)
+	w.Header().Set("content-type", "application/json")
+	ownersOrders, err := models.GetResponseGetOwnerOrders(orders)
+	if err != nil {
+		h.l.ZL.Info("GetResponseGetOwnerOrders fail", zap.Error(err))
+		return
+	}
+	if err := enc.Encode(ownersOrders); err != nil {
+		h.l.ZL.Info("fail encoding response in handler", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
