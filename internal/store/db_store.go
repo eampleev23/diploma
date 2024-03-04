@@ -160,6 +160,9 @@ func (d DBStore) GetOrdersByUserID(ctx context.Context, userID int) (orders []mo
 	for rows.Next() {
 		var v models.Order
 		err = rows.Scan(&v.ID, &v.Number, &v.CustomerID, &v.Status, &v.Accrual, &v.UploadedAt)
+		if err != nil {
+			return orders, fmt.Errorf(" rows san fail: %w")
+		}
 		d.l.ZL.Debug("got order",
 			zap.String("number", v.Number),
 			zap.Time("uploaded at", v.UploadedAt),
