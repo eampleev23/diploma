@@ -49,7 +49,11 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.l.ZL.Debug("Moon test success..")
-	newOrder := models.Order{Number: textPlainContent, UserID: userID}
+	newOrder := models.Order{
+		Number:     textPlainContent,
+		CustomerID: userID,
+		Status:     "NEW",
+	}
 	_, err = h.serv.AddOrder(r.Context(), newOrder)
 	if err != nil && errors.Is(err, store.ErrConflict) {
 		h.l.ZL.Debug("this order already exists")
