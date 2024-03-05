@@ -24,4 +24,10 @@ func (h *Handlers) GetBalance(w http.ResponseWriter, r *http.Request) {
 	}
 	h.l.ZL.Debug("Authorized user:", zap.Int("userID", userID))
 
+	current, withdraw, err := h.serv.GetBalance(r.Context(), userID)
+	h.l.ZL.Debug("got balance",
+		zap.Int("current", current),
+		zap.Int("withdraw", withdraw),
+	)
+
 }

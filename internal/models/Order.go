@@ -32,3 +32,9 @@ func GetResponseGetOwnerOrders(source []Order) (result []ResponseGetOwnerOrders,
 	}
 	return result, nil
 }
+
+// ResponseGetBalance описывает элемент ответа пользователю на получение суммы его баллов и суммы списаний.
+type ResponseGetBalance struct {
+	Current  int `json:"current"`
+	Withdraw int `json:"withdraw"`
+}
