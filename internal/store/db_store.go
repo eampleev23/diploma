@@ -179,3 +179,11 @@ func (d DBStore) GetOrdersByUserID(ctx context.Context, userID int) (orders []mo
 	}
 	return orders, nil
 }
+func (d DBStore) GetCurrentSumAccrual(ctx context.Context, userID int) (current int, err error) {
+	d.l.ZL.Debug("DBStore / GetCurrentSumAccrual has started..")
+	return current, nil
+}
+func (d DBStore) GetWithDraw(ctx context.Context, userID int) (withdraw int, err error) {
+	d.l.ZL.Debug("DBStore / GetWithDraw has started..")
+	return withdraw, nil
+}

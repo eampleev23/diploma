@@ -22,6 +22,8 @@ type Store interface {
 	AddNewOrder(ctx context.Context, newOrder models.Order) (orderBack models.Order, err error)
 	GetUserIDByOrder(ctx context.Context, orderNumber string) (userID int, err error)
 	GetOrdersByUserID(ctx context.Context, userID int) (orders []models.Order, err error)
+	GetCurrentSumAccrual(ctx context.Context, userID int) (currentSumAccrual int, err error)
+	GetWithDraw(ctx context.Context, userID int) (withdraw int, err error)
 }
 
 func NewStorage(c *cnf.Config, l *mlg.ZapLog) (Store, error) {

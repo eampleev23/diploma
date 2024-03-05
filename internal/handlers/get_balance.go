@@ -29,5 +29,4 @@ func (h *Handlers) GetBalance(w http.ResponseWriter, r *http.Request) {
 		zap.Int("current", current),
 		zap.Int("withdraw", withdraw),
 	)
-
 }
