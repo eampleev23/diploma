@@ -181,6 +181,15 @@ func (d DBStore) GetOrdersByUserID(ctx context.Context, userID int) (orders []mo
 }
 func (d DBStore) GetCurrentSumAccrual(ctx context.Context, userID int) (current int, err error) {
 	d.l.ZL.Debug("DBStore / GetCurrentSumAccrual has started..")
+	row := d.dbConn.QueryRowContext(ctx,
+		`SELECT SUM(accrual)
+				FROM orders
+				WHERE customer_id = $1;`, userID)
+	err = row.Scan(&current) // Разбираем результат
+	if err != nil {
+		return current, fmt.Errorf("faild to get sum accrual by scan %w", err)
+	}
+	d.l.ZL.Debug("DBStore / GetCurrentSumAccrual / Got sum accrual", zap.Int("current", current))
 	return current, nil
 }
 func (d DBStore) GetWithDraw(ctx context.Context, userID int) (withdraw int, err error) {
