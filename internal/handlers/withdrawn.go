@@ -41,8 +41,29 @@ func (h *Handlers) Withdrawn(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	req.UserID = userID
 	h.l.ZL.Debug("got request",
 		zap.String("order", req.Order),
 		zap.Int("sum", req.Sum),
 	)
+	err = h.serv.MoonCheck(req.Order)
+	if err != nil {
+		h.l.ZL.Debug("Mooncheck fail..")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+	}
+	sucсess, isOrder, isEnougph, err := h.serv.MakeWithdrawn(r.Context(), req)
+	if err != nil {
+		h.l.ZL.Error("serv.MakeWithdrawn fail", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	h.l.ZL.Debug("got MakeWithdrawn result",
+		zap.Bool("sucess", sucсess),
+		zap.Bool("isOrder", isOrder),
+		zap.Bool("isEnougph", isEnougph),
+	)
+	if !isEnougph {
+		h.l.ZL.Info("Sum of the balance is not enough..", zap.Error(err))
+		w.WriteHeader(http.StatusPaymentRequired)
+		return
+	}
 }
