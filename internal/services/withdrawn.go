@@ -36,5 +36,6 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 	if balance > withdrawn.Sum {
 		isEnough = true
 	}
+	success, err = serv.s.CreateWithdrawn(ctx, withdrawn)
 	return success, isOrder, isEnough, err
 }

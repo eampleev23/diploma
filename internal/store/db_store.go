@@ -216,3 +216,28 @@ func (d DBStore) GetFullOrderByOrder(
 	}
 	return fullOrder, err
 }
+func (d DBStore) CreateWithdrawn(ctx context.Context, withdrawn models.Withdrawn) (success bool, err error) {
+	d.l.ZL.Debug("db CreateWithdrawn has started..")
+	d.l.ZL.Debug("got withdrawn",
+		zap.String("order", withdrawn.Order),
+		zap.Int("sum", withdrawn.Sum),
+	)
+	//err = d.dbConn.QueryRow( //nolint:execinquery // нужен скан
+	//	`INSERT INTO withdraw
+	//			(sum, order_number)
+	//			VALUES($1, $2)
+	//			RETURNING
+	//			id, su, customer_id`,
+	//	newOrder.Number,
+	//	newOrder.CustomerID,
+	//	newOrder.Status).Scan(
+	//	&orderBack.ID,
+	//	&orderBack.Number,
+	//	&orderBack.CustomerID)
+	//var pgErr *pgconn.PgError
+	//if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
+	//	err = ErrConflict
+	//}
+	//return orderBack, err
+	return success, err
+}
