@@ -11,17 +11,6 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 	success, isOrder, isEnough bool,
 	err error) {
 	serv.l.ZL.Debug("Service MakeWithdrawn has started..")
-	order, err := serv.s.GetFullOrderByOrder(ctx, withdrawn.Order)
-	if err != nil {
-		return success, isOrder, isEnough, err
-	}
-	serv.l.ZL.Debug("got GetFullOrderByOrder result",
-		zap.Int("order id", order.ID),
-		zap.Int("order accrual", order.Accrual),
-		zap.String("order status", order.Status),
-	)
-
-	isOrder = true
 
 	current, withdrawnSum, err := serv.GetBalance(ctx, withdrawn.UserID)
 	if err != nil {
@@ -36,6 +25,15 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 	if balance > withdrawn.Sum {
 		isEnough = true
 	}
-	success, err = serv.s.CreateWithdrawn(ctx, withdrawn)
+	success, withdrawnBack, err := serv.s.CreateWithdrawn(ctx, withdrawn)
+	if err != nil {
+		return success, isOrder, isEnough, fmt.Errorf("CreateWithdrawn fail: %w", err)
+	}
+	serv.l.ZL.Debug("WithdrawnBack",
+		zap.Int("ID", withdrawnBack.ID),
+		zap.Int("SUM", withdrawnBack.Sum),
+		zap.Int("USER", withdrawnBack.UserID),
+		zap.String("ORDER", withdrawnBack.Order),
+	)
 	return success, isOrder, isEnough, err
 }

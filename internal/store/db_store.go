@@ -193,6 +193,11 @@ func (d DBStore) GetCurrentSumAccrual(ctx context.Context, userID int) (current 
 }
 func (d DBStore) GetWithDraw(ctx context.Context, userID int) (withdraw int, err error) {
 	d.l.ZL.Debug("DBStore / GetWithDraw has started..")
+	row := d.dbConn.QueryRowContext(ctx,
+		`SELECT SUM(sum)
+				FROM withdraw
+				WHERE user_id = $1;`, userID)
+	err = row.Scan(&withdraw) // Разбираем результат
 	return withdraw, nil
 }
 func (d DBStore) GetFullOrderByOrder(
@@ -216,28 +221,37 @@ func (d DBStore) GetFullOrderByOrder(
 	}
 	return fullOrder, err
 }
-func (d DBStore) CreateWithdrawn(ctx context.Context, withdrawn models.Withdrawn) (success bool, err error) {
+func (d DBStore) CreateWithdrawn(
+	ctx context.Context,
+	withdrawn models.Withdrawn) (
+	success bool,
+	withdrawnBack models.Withdrawn,
+	err error) {
 	d.l.ZL.Debug("db CreateWithdrawn has started..")
 	d.l.ZL.Debug("got withdrawn",
 		zap.String("order", withdrawn.Order),
 		zap.Int("sum", withdrawn.Sum),
 	)
-	//err = d.dbConn.QueryRow( //nolint:execinquery // нужен скан
-	//	`INSERT INTO withdraw
-	//			(sum, order_number)
-	//			VALUES($1, $2)
-	//			RETURNING
-	//			id, su, customer_id`,
-	//	newOrder.Number,
-	//	newOrder.CustomerID,
-	//	newOrder.Status).Scan(
-	//	&orderBack.ID,
-	//	&orderBack.Number,
-	//	&orderBack.CustomerID)
-	//var pgErr *pgconn.PgError
-	//if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
-	//	err = ErrConflict
-	//}
-	//return orderBack, err
-	return success, err
+	err = d.dbConn.QueryRow( //nolint:execinquery // нужен скан
+		`INSERT INTO withdraw
+				(sum, order_number, user_id)
+				VALUES($1, $2, $3)
+				RETURNING
+				id,sum,order_number,user_id`,
+		withdrawn.Sum,
+		withdrawn.Order,
+		withdrawn.UserID).Scan(
+		&withdrawnBack.ID,
+		&withdrawnBack.Sum,
+		&withdrawnBack.Order,
+		&withdrawnBack.UserID)
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
+		err = ErrConflict
+	}
+	if err != nil {
+		return success, withdrawnBack, fmt.Errorf("QueryRow fail: %w", err)
+	}
+	success = true
+	return success, withdrawnBack, err
 }
