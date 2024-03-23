@@ -198,6 +198,9 @@ func (d DBStore) GetWithDraw(ctx context.Context, userID int) (withdraw int, err
 				FROM withdraw
 				WHERE user_id = $1;`, userID)
 	err = row.Scan(&withdraw) // Разбираем результат
+	if err != nil {
+		return 0, fmt.Errorf("QueryRowContext fail: %w", err)
+	}
 	return withdraw, nil
 }
 func (d DBStore) GetFullOrderByOrder(
