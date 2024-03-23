@@ -1,0 +1,8 @@
+BEGIN TRANSACTION;
+CREATE TABLE IF NOT EXISTS withdraw
+(
+    id           INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    sum          INT,
+    order_number TEXT
+);
+COMMIT;

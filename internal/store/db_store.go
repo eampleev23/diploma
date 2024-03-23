@@ -6,9 +6,8 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"go.uber.org/zap"
-
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"go.uber.org/zap"
 
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/mlg"
@@ -194,5 +193,68 @@ func (d DBStore) GetCurrentSumAccrual(ctx context.Context, userID int) (current 
 }
 func (d DBStore) GetWithDraw(ctx context.Context, userID int) (withdraw int, err error) {
 	d.l.ZL.Debug("DBStore / GetWithDraw has started..")
+	row := d.dbConn.QueryRowContext(ctx,
+		`SELECT SUM(sum)
+				FROM withdraw
+				WHERE user_id = $1;`, userID)
+	err = row.Scan(&withdraw) // Разбираем результат
+	if err != nil {
+		return 0, fmt.Errorf("QueryRowContext fail: %w", err)
+	}
 	return withdraw, nil
+}
+func (d DBStore) GetFullOrderByOrder(
+	ctx context.Context,
+	orderNumber string) (
+	fullOrder models.Order,
+	err error) {
+	d.l.ZL.Debug("GetFullOrderByOrder has started..")
+	row := d.dbConn.QueryRowContext(ctx,
+		`SELECT 
+    			id,number,customer_id,status,accrual,uploaded_at
+				FROM orders
+				WHERE number = $1 LIMIT 1`,
+		orderNumber,
+	)
+	err = row.Scan(&fullOrder.ID, &fullOrder.Number,
+		&fullOrder.CustomerID, &fullOrder.Status,
+		&fullOrder.Accrual, &fullOrder.UploadedAt) // Разбираем результат
+	if err != nil {
+		return fullOrder, fmt.Errorf("faild to get full order by order's number %w", err)
+	}
+	return fullOrder, err
+}
+func (d DBStore) CreateWithdrawn(
+	ctx context.Context,
+	withdrawn models.Withdrawn) (
+	success bool,
+	withdrawnBack models.Withdrawn,
+	err error) {
+	d.l.ZL.Debug("db CreateWithdrawn has started..")
+	d.l.ZL.Debug("got withdrawn",
+		zap.String("order", withdrawn.Order),
+		zap.Int("sum", withdrawn.Sum),
+	)
+	err = d.dbConn.QueryRow( //nolint:execinquery // нужен скан
+		`INSERT INTO withdraw
+				(sum, order_number, user_id)
+				VALUES($1, $2, $3)
+				RETURNING
+				id,sum,order_number,user_id`,
+		withdrawn.Sum,
+		withdrawn.Order,
+		withdrawn.UserID).Scan(
+		&withdrawnBack.ID,
+		&withdrawnBack.Sum,
+		&withdrawnBack.Order,
+		&withdrawnBack.UserID)
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
+		err = ErrConflict
+	}
+	if err != nil {
+		return success, withdrawnBack, fmt.Errorf("QueryRow fail: %w", err)
+	}
+	success = true
+	return success, withdrawnBack, err
 }
