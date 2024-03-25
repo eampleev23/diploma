@@ -106,12 +106,11 @@ func (serv *Services) sum2Places(number int64) (result int64) {
 	//serv.l.ZL.Debug("sum2Places/ got a number", zap.Int64("number", number))
 	numberString := strconv.FormatInt(number, 10)
 	// serv.l.ZL.Debug("sum2Places/ преобразовали в строку", zap.String("numberString", numberString))
-	numberRunes := []rune(numberString)
 	// serv.l.ZL.Debug("sum2Places/ преобразовали в массив рун")
 	result = 0
 	// serv.l.ZL.Debug("sum2Places/ в result int64 присвоили 0", zap.Int64("result", result))
 	// serv.l.ZL.Debug("sum2Places/ начнаем перебирать каждую руну..")
-	for _, digit := range string(numberRunes) {
+	for _, digit := range numberString {
 		//serv.l.ZL.Debug("sum2Places/ итерация ", zap.Int("iter #", i+1))
 		// serv.l.ZL.Debug("", zap.String("sum2Places/ iter/ берем руну:", string(digit)))
 		// Преобразуем руну в int64
