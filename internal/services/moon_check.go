@@ -111,7 +111,7 @@ func (serv *Services) sum2Places(number int64) (result int64) {
 	result = 0
 	// serv.l.ZL.Debug("sum2Places/ в result int64 присвоили 0", zap.Int64("result", result))
 	// serv.l.ZL.Debug("sum2Places/ начнаем перебирать каждую руну..")
-	for _, digit := range numberRunes {
+	for _, digit := range string(numberRunes) {
 		//serv.l.ZL.Debug("sum2Places/ итерация ", zap.Int("iter #", i+1))
 		// serv.l.ZL.Debug("", zap.String("sum2Places/ iter/ берем руну:", string(digit)))
 		// Преобразуем руну в int64
