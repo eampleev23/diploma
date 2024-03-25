@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
+	"github.com/eampleev23/diploma/internal/models"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -26,7 +28,7 @@ func (h *Handlers) Withdrawals(w http.ResponseWriter, r *http.Request) {
 
 	withdrawals, err := h.serv.GetWithdrawalsByUserID(r.Context(), userID)
 	if err != nil {
-		h.l.ZL.Error("GetOrdersByUserID fail")
+		h.l.ZL.Error("GetWithdrawalsByUserID fail")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -35,7 +37,17 @@ func (h *Handlers) Withdrawals(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	//enc := json.NewEncoder(w)
-	//w.Header().Set("content-type", "application/json")
-	//ownersWithdrawals, err := models.GetResponseGetOwnerWithdrawals(withdrawals)
+	enc := json.NewEncoder(w)
+	w.Header().Set("content-type", "application/json")
+	ownersWithdrawals, err := models.GetResponseGetOwnerWithdrawals(withdrawals)
+	if err != nil {
+		h.l.ZL.Info("GetResponseGetOwnerWithdrawals fail", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if err := enc.Encode(ownersWithdrawals); err != nil {
+		h.l.ZL.Info("fail encoding response in handler", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }

@@ -22,8 +22,11 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 		zap.Int("current", current),
 		zap.Int("withdrawnSum", withdrawnSum),
 	)
-	if balance > withdrawn.Sum {
+	if balance >= withdrawn.Sum {
 		isEnough = true
+	} else {
+		isEnough = false
+		return success, isOrder, isEnough, err
 	}
 	success, withdrawnBack, err := serv.s.CreateWithdrawn(ctx, withdrawn)
 	if err != nil {
