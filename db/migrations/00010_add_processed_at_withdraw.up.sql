@@ -1,0 +1,4 @@
+BEGIN TRANSACTION;
+ALTER TABLE withdraw
+    ADD COLUMN processed_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP;
+COMMIT;
