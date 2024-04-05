@@ -64,7 +64,7 @@ func (d DBStore) GetWithdrawalsByUserID(ctx context.Context, userID int) (withde
 		}
 		d.l.ZL.Debug("got withdrawn",
 			zap.Int("id", v.ID),
-			zap.Int("sum", v.Sum),
+			zap.Float64("sum", v.Sum),
 			zap.String("order", v.Order),
 			zap.Int("user_id", v.UserID),
 			zap.Time("processed at", v.ProcessedAt),

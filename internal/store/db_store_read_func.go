@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func (d DBStore) GetCurrentSumAccrual(ctx context.Context, userID int) (current int, err error) {
+func (d DBStore) GetCurrentSumAccrual(ctx context.Context, userID int) (current float64, err error) {
 	d.l.ZL.Debug("DBStore / GetCurrentSumAccrual has started..")
 	row := d.dbConn.QueryRowContext(ctx,
 		`SELECT SUM(accrual)
@@ -17,11 +17,11 @@ func (d DBStore) GetCurrentSumAccrual(ctx context.Context, userID int) (current 
 	if err != nil {
 		return current, fmt.Errorf("faild to get sum accrual by scan %w", err)
 	}
-	d.l.ZL.Debug("DBStore / GetCurrentSumAccrual / Got sum accrual", zap.Int("current", current))
+	d.l.ZL.Debug("DBStore / GetCurrentSumAccrual / Got sum accrual", zap.Float64("current", current))
 	return current, nil
 }
 
-func (d DBStore) GetWithDraw(ctx context.Context, userID int) (withdraw int, err error) {
+func (d DBStore) GetWithDraw(ctx context.Context, userID int) (withdraw float64, err error) {
 	d.l.ZL.Debug("DBStore / GetWithDraw has started..")
 	row := d.dbConn.QueryRowContext(ctx,
 		`SELECT SUM(sum)

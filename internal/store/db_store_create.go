@@ -66,7 +66,7 @@ func (d DBStore) CreateWithdrawn(
 	d.l.ZL.Debug("db CreateWithdrawn has started..")
 	d.l.ZL.Debug("got withdrawn",
 		zap.String("order", withdrawn.Order),
-		zap.Int("sum", withdrawn.Sum),
+		zap.Float64("sum", withdrawn.Sum),
 	)
 	err = d.dbConn.QueryRow( //nolint:execinquery // нужен скан
 		`INSERT INTO withdraw

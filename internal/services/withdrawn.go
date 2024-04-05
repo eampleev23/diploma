@@ -18,9 +18,9 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 	}
 	balance := current - withdrawnSum
 	serv.l.ZL.Debug("Counted balance",
-		zap.Int("balance", balance),
-		zap.Int("current", current),
-		zap.Int("withdrawnSum", withdrawnSum),
+		zap.Float64("balance", balance),
+		zap.Float64("current", current),
+		zap.Float64("withdrawnSum", withdrawnSum),
 	)
 	if balance >= withdrawn.Sum {
 		isEnough = true
@@ -34,7 +34,7 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 	}
 	serv.l.ZL.Debug("WithdrawnBack",
 		zap.Int("ID", withdrawnBack.ID),
-		zap.Int("SUM", withdrawnBack.Sum),
+		zap.Float64("SUM", withdrawnBack.Sum),
 		zap.Int("USER", withdrawnBack.UserID),
 		zap.String("ORDER", withdrawnBack.Order),
 	)

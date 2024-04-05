@@ -9,7 +9,7 @@ import (
 type Withdrawn struct {
 	Order       string    `json:"order"`
 	ID          int       `json:"id"`
-	Sum         int       `json:"sum"`
+	Sum         float64   `json:"sum"`
 	UserID      int       `json:"user_id"`
 	ProcessedAt time.Time `json:"processed_at"`
 }
@@ -17,7 +17,7 @@ type Withdrawn struct {
 // ResponseGetOwnerWithdrawals описывает элемент ответа пользователю на получение всех его списаний.
 type ResponseGetOwnerWithdrawals struct {
 	Order       string    `json:"order"`
-	Sum         int       `json:"sum"`
+	Sum         float64   `json:"sum"`
 	ProcessedAt time.Time `json:"processed_at"`
 }
 

@@ -6,7 +6,7 @@ import (
 )
 
 // GetBalance возвращает сумму баллов и сумму списаний
-func (serv *Services) GetBalance(ctx context.Context, userID int) (current, withdraw int, err error) {
+func (serv *Services) GetBalance(ctx context.Context, userID int) (current, withdraw float64, err error) {
 	// Возвращает баланс
 	serv.l.ZL.Debug("services / GetBalance started..")
 	current, err = serv.s.GetCurrentSumAccrual(ctx, userID)
