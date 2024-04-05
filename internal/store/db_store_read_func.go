@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"go.uber.org/zap"
+	"log"
 	"strings"
 )
 
@@ -31,6 +32,7 @@ func (d DBStore) GetWithDraw(ctx context.Context, userID int) (withdraw float64,
 	if err != nil {
 		strError := error.Error(err)
 		if strings.Contains(strError, "converting NULL to float64 is unsupported") {
+			log.Println("Here we are! ..")
 			return 0, nil
 		}
 		return 0, fmt.Errorf("QueryRowContext fail: %w", err)
