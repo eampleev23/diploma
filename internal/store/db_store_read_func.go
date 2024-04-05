@@ -30,7 +30,7 @@ func (d DBStore) GetWithDraw(ctx context.Context, userID int) (withdraw float64,
 	err = row.Scan(&withdraw) // Разбираем результат
 	if err != nil {
 		strError := error.Error(err)
-		if strings.Contains(strError, "converting NULL to int is unsupported") {
+		if strings.Contains(strError, "converting NULL to float64 is unsupported") {
 			return 0, nil
 		}
 		return 0, fmt.Errorf("QueryRowContext fail: %w", err)
