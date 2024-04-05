@@ -1,0 +1,4 @@
+BEGIN TRANSACTION;
+ALTER TABLE orders
+    ALTER COLUMN accrual TYPE float;
+COMMIT;

@@ -116,7 +116,7 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 	h.l.ZL.Debug("got order status",
 		zap.String("order", orderAccrualResp.Order),
 		zap.String("status", orderAccrualResp.Status),
-		zap.Int("accrual", orderAccrualResp.Accrual),
+		zap.Float64("accrual", orderAccrualResp.Accrual),
 	)
 
 	newOrder := models.Order{

@@ -31,7 +31,7 @@ func (d DBStore) GetOrdersByUserID(ctx context.Context, userID int) (orders []mo
 			zap.Time("uploaded at", v.UploadedAt),
 			zap.Int("customer", v.CustomerID),
 			zap.String("status", v.Status),
-			zap.Int("accrual", v.Accrual),
+			zap.Float64("accrual", v.Accrual),
 			zap.Int("id", v.ID),
 		)
 		orders = append(orders, v)
