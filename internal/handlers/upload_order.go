@@ -62,12 +62,24 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		SetRetryWaitTime(30 * time.Second).
 		// длительность максимального ожидания
 		SetRetryMaxWaitTime(90 * time.Second)
+	URL, err := url.JoinPath(h.c.AccrualRunAddr, "/api/good")
+	if err != nil {
+		h.l.ZL.Debug("url.JoinPath fail..", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	_, err = client.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(`{"match":"Bork","reward":10,"reward_type":"%"}`).
-		Post("http://localhost:8080/api/goods")
+		Post(URL)
 	if err != nil {
 		h.l.ZL.Debug("1 req to accrual fail..", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	URL, err = url.JoinPath(h.c.AccrualRunAddr, "/api/orders")
+	if err != nil {
+		h.l.ZL.Debug("url.JoinPath fail..", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -76,7 +88,7 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		SetBody(models.OrderAccrual{
 			Order: textPlainContent,
 			Goods: []models.Good{{Description: "Чайник Bork", Price: 7000}},
-		}).Post("http://localhost:8080/api/orders")
+		}).Post(URL)
 	if err != nil {
 		h.l.ZL.Debug("2 req to accrual fail..", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
@@ -85,7 +97,7 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 	var responseErr models.MyApiError
 	var orderAccrualResp models.OrderAccrualResp
 
-	url, err := url.JoinPath("http://localhost:8080/api/orders/", textPlainContent)
+	URL, err = url.JoinPath(h.c.AccrualRunAddr+"/api/orders/", textPlainContent)
 	if err != nil {
 		h.l.ZL.Debug("url.JoinPath fail..", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
@@ -94,7 +106,7 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 	_, err = client.R().
 		SetError(&responseErr).
 		SetResult(&orderAccrualResp).
-		Get(url)
+		Get(URL)
 
 	if err != nil {
 		h.l.ZL.Debug("3 req (get) to accrual fail..", zap.Error(err))

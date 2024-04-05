@@ -7,12 +7,13 @@ import (
 )
 
 type Config struct {
-	RanAddr     string
-	LogLevel    string
-	DBDSN       string
-	SecretKey   string
-	TLimitQuery time.Duration
-	TokenExp    time.Duration
+	RanAddr        string
+	AccrualRunAddr string
+	LogLevel       string
+	DBDSN          string
+	SecretKey      string
+	TLimitQuery    time.Duration
+	TokenExp       time.Duration
 }
 
 func NewConfig() (*Config, error) {
@@ -36,6 +37,8 @@ func (c *Config) SetValues() error {
 	flag.StringVar(&c.DBDSN, "d", "", "postgres database")
 	// принимаем секретный ключ сервера для авторизации
 	flag.StringVar(&c.SecretKey, "s", "e4853f5c4810101e88f1898db21c15d3", "server's secret key for authorization")
+	// Адрес системы начислений
+	flag.StringVar(&c.AccrualRunAddr, "r", "http://localhost:8080", "accrual addr")
 	// парсим переданные серверу аргументы в зарегестрированные переменные
 	flag.Parse()
 
@@ -50,8 +53,13 @@ func (c *Config) SetValues() error {
 	if envDBDSN := os.Getenv("DATABASE_URI"); envDBDSN != "" {
 		c.DBDSN = envDBDSN
 	}
+
 	if envSecretKey := os.Getenv("SECRET_KEY"); envSecretKey != "" {
 		c.SecretKey = envSecretKey
+	}
+
+	if envAccrualRunAddr := os.Getenv("ACCRUAL_SYSTEM_ADDRESS"); envAccrualRunAddr != "" {
+		c.AccrualRunAddr = envAccrualRunAddr
 	}
 	return nil
 }
