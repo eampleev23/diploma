@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"errors"
-	"net/http"
-	"strings"
-
 	"github.com/eampleev23/diploma/internal/store"
+	"github.com/go-resty/resty/v2"
+	"net/http"
+	"net/url"
+	"strings"
+	"time"
 
 	"github.com/eampleev23/diploma/internal/models"
 	"go.uber.org/zap"
@@ -49,10 +51,67 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.l.ZL.Debug("Moon test success..")
+
+	// Отправляем первый запрос в систему рассчета баллов лояльности
+	// создаём новый клиент
+	client := resty.New()
+	client.
+		// устанавливаем количество повторений
+		SetRetryCount(3).
+		// длительность ожидания между попытками
+		SetRetryWaitTime(30 * time.Second).
+		// длительность максимального ожидания
+		SetRetryMaxWaitTime(90 * time.Second)
+	_, err = client.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(`{"match":"Bork","reward":10,"reward_type":"%"}`).
+		Post("http://localhost:8080/api/goods")
+	if err != nil {
+		h.l.ZL.Debug("1 req to accrual fail..", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	client.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(models.OrderAccrual{
+			Order: textPlainContent,
+			Goods: []models.Good{{Description: "Чайник Bork", Price: 7000}},
+		}).Post("http://localhost:8080/api/orders")
+	if err != nil {
+		h.l.ZL.Debug("2 req to accrual fail..", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	var responseErr models.MyApiError
+	var orderAccrualResp models.OrderAccrualResp
+
+	url, err := url.JoinPath("http://localhost:8080/api/orders/", textPlainContent)
+	if err != nil {
+		h.l.ZL.Debug("url.JoinPath fail..", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	_, err = client.R().
+		SetError(&responseErr).
+		SetResult(&orderAccrualResp).
+		Get(url)
+
+	if err != nil {
+		h.l.ZL.Debug("3 req (get) to accrual fail..", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	h.l.ZL.Debug("got order status",
+		zap.String("order", orderAccrualResp.Order),
+		zap.String("status", orderAccrualResp.Status),
+		zap.Int("accrual", orderAccrualResp.Accrual),
+	)
+
 	newOrder := models.Order{
-		Number:     textPlainContent,
+		Number:     orderAccrualResp.Order,
 		CustomerID: userID,
-		Status:     "NEW",
+		Status:     orderAccrualResp.Status,
+		Accrual:    orderAccrualResp.Accrual,
 	}
 	_, err = h.serv.AddOrder(r.Context(), newOrder)
 	if err != nil && errors.Is(err, store.ErrConflict) {
