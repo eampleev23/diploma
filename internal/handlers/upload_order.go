@@ -83,7 +83,7 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	client.R().
+	_, err = client.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(models.OrderAccrual{
 			Order: textPlainContent,
@@ -94,7 +94,7 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	var responseErr models.MyApiError
+	var responseErr models.MyAPIError
 	var orderAccrualResp models.OrderAccrualResp
 
 	URL, err = url.JoinPath(h.c.AccrualRunAddr+"/api/orders/", textPlainContent)

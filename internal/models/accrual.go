@@ -2,8 +2,8 @@ package models
 
 import "time"
 
-// MyApiError — описание ошибки при неверном запросе.
-type MyApiError struct {
+// MyAPIError — описание ошибки при неверном запросе.
+type MyAPIError struct {
 	Code      int       `json:"code"`
 	Message   string    `json:"message"`
 	Timestamp time.Time `json:"timestamp"`
