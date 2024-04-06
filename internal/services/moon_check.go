@@ -65,7 +65,6 @@ func (serv *Services) forEven(numbers []int64) (err error) {
 	var sum int64
 	sum = 0
 	//serv.l.ZL.Debug("forEven / Записали в sum int64 0..")
-	//log.Println("numbers = ", numbers)
 	for _, v := range numbers {
 		sum += v
 	}

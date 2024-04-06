@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/eampleev23/diploma/internal/store"
 	"github.com/go-resty/resty/v2"
+	"math"
 	"net/http"
 	"net/url"
 	"strings"
@@ -107,6 +108,7 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		SetError(&responseErr).
 		SetResult(&orderAccrualResp).
 		Get(URL)
+	orderAccrualResp.Accrual = math.Round(orderAccrualResp.Accrual*100) / 100
 
 	if err != nil {
 		h.l.ZL.Debug("3 req (get) to accrual fail..", zap.Error(err))

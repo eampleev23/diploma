@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"time"
 )
 
@@ -24,7 +23,6 @@ type ResponseGetOwnerWithdrawals struct {
 func GetResponseGetOwnerWithdrawals(source []Withdrawn) (result []ResponseGetOwnerWithdrawals, err error) {
 	result = make([]ResponseGetOwnerWithdrawals, 0, len(source))
 	for _, v := range source {
-		log.Println("v.ProcessedAt", v.ProcessedAt)
 		result = append(result, ResponseGetOwnerWithdrawals{
 			Order:       v.Order,
 			Sum:         v.Sum,
