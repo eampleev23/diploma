@@ -17,5 +17,6 @@ func (serv *Services) GetBalance(ctx context.Context, userID int) (current, with
 	if err != nil {
 		return 0, 0, fmt.Errorf("GetWithDraw fail: %w", err)
 	}
+	current = current - withdraw
 	return current, withdraw, nil
 }
