@@ -17,7 +17,7 @@ func (serv *Services) GetStatusFromAccrual(ctx context.Context, textPlainContent
 		if err != nil {
 			return models.Order{}, fmt.Errorf("uploadOrderTry fail: %w", err)
 		}
-		time.Tick(10)
+		time.NewTicker(10)
 	}
 	serv.l.ZL.Debug("GetStatusFromAccrual has finished..")
 	return o, err
