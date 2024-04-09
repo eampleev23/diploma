@@ -83,10 +83,10 @@ func (d DBStore) CreateWithdrawn(
 		&withdrawnBack.Sum,
 		&withdrawnBack.Order,
 		&withdrawnBack.UserID)
-	//var pgErr *pgconn.PgError
-	//if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
-	//	err = ErrConflict
-	//}
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
+		err = ErrConflict
+	}
 	if err != nil {
 		return success, withdrawnBack, fmt.Errorf("QueryRow fail: %w", err)
 	}
