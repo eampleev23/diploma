@@ -26,6 +26,7 @@ func (serv *Services) GetStatusFromAccrual(ctx context.Context, textPlainContent
 		time.NewTicker(10)
 		try++
 	}
+	o.Status = "PROCESSING"
 	serv.l.ZL.Debug("GetStatusFromAccrual has finished..")
 	return o, err
 }
