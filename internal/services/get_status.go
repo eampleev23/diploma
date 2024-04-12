@@ -12,14 +12,19 @@ import (
 
 func (serv *Services) GetStatusFromAccrual(ctx context.Context, textPlainContent string, userID int) (o models.Order, err error) {
 	serv.l.ZL.Debug("GetStatusFromAccrual has started..")
+	try := 1
 	for o.Status != "PROCESSED" {
-		serv.l.ZL.Debug("try...Х")
 		o, err = serv.uploadOrderTry(ctx, textPlainContent, userID)
 		if err != nil {
 			return models.Order{}, fmt.Errorf("uploadOrderTry fail: %w", err)
 		}
 
+		serv.l.ZL.Debug("Got status from accrual",
+			zap.String("status", o.Status),
+			zap.Int("try", try),
+		)
 		time.NewTicker(10)
+		try++
 	}
 	serv.l.ZL.Debug("GetStatusFromAccrual has finished..")
 	return o, err
@@ -59,7 +64,12 @@ func (serv *Services) uploadOrderTry(ctx context.Context, textPlainContent strin
 		SetHeader("Content-Type", "application/json").
 		SetBody(models.OrderAccrual{
 			Order: textPlainContent,
-			Goods: []models.Good{{Description: "Лейка Bork", Price: 5000}},
+			Goods: []models.Good{
+				{Description: "Чайник Bork", Price: 5000},
+				{Description: "Лейка Bork", Price: 7000},
+				{Description: "Пылесос Bork", Price: 18325},
+				{Description: "Столовые приборы Bork", Price: 27451},
+			},
 		}).Post(URL)
 	if err != nil {
 		return models.Order{}, fmt.Errorf("second request fail: %w", err)
