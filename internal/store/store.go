@@ -20,6 +20,7 @@ type Store interface {
 	GetUserByLoginAndPassword(ctx context.Context, userLoginReq models.UserLoginReq) (userBack models.User, err error)
 	// AddNewOrder добавляет новый заказ
 	AddNewOrder(ctx context.Context, newOrder models.Order) (orderBack models.Order, err error)
+	UpdateOrder(ctx context.Context, newOrder models.Order) (orderBack models.Order, err error)
 	GetUserIDByOrder(ctx context.Context, orderNumber string) (userID int, err error)
 	GetOrdersByUserID(ctx context.Context, userID int) (orders []models.Order, err error)
 	GetCurrentSumAccrual(ctx context.Context, userID int) (currentSumAccrual float64, err error)

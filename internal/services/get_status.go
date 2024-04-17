@@ -13,7 +13,6 @@ import (
 func (serv *Services) GetStatusFromAccrual(ctx context.Context, textPlainContent string, userID int) (o models.Order, err error) {
 	serv.l.ZL.Debug("GetStatusFromAccrual has started..")
 	try := 1
-	//for o.Status == "PROCESSING" || o.Status == "REGISTERED" {
 	for o.Status != "PROCESSED" {
 		o, err = serv.uploadOrderTry(ctx, textPlainContent, userID)
 		if err != nil {
@@ -22,6 +21,14 @@ func (serv *Services) GetStatusFromAccrual(ctx context.Context, textPlainContent
 
 		serv.l.ZL.Debug("Got status from accrual",
 			zap.String("status", o.Status),
+			zap.Int("try", try),
+		)
+		orderBack, err := serv.s.UpdateOrder(ctx, o)
+		if err != nil {
+			return models.Order{}, fmt.Errorf("UpdateOrder fail: %w", err)
+		}
+		serv.l.ZL.Debug("UpdateOrder success..",
+			zap.String("status", orderBack.Status),
 			zap.Int("try", try),
 		)
 		time.NewTicker(10)

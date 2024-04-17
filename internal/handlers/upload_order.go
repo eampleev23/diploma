@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"github.com/eampleev23/diploma/internal/models"
 	"github.com/eampleev23/diploma/internal/store"
 	"go.uber.org/zap"
 	"net/http"
@@ -47,11 +48,10 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 	}
 	h.l.ZL.Debug("Moon test success..")
 
-	newOrder, err := h.serv.GetStatusFromAccrual(r.Context(), textPlainContent, userID)
-	if err != nil {
-		h.l.ZL.Debug("GetStatusFromAccrual fail..", zap.Error(err))
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	newOrder := models.Order{
+		Number:     textPlainContent,
+		CustomerID: userID,
+		Status:     "REGISTERED",
 	}
 
 	_, err = h.serv.AddOrder(r.Context(), newOrder)
@@ -67,5 +67,13 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusConflict)
 		return
 	}
+
+	newOrder, err = h.serv.GetStatusFromAccrual(r.Context(), textPlainContent, userID)
+	if err != nil {
+		h.l.ZL.Debug("GetStatusFromAccrual fail..", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusAccepted)
 }
