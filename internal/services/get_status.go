@@ -18,7 +18,7 @@ func (serv *Services) GetStatusFromAccrual(ctx context.Context, textPlainContent
 	//if err != nil {
 	//	return models.Order{}, fmt.Errorf("UpdateOrder fail: %w", err)
 	//}
-	for o.Status != "PROCESSED" || o.Status != "INVALID" {
+	for o.Status != "PROCESSED" && o.Status != "INVALID" {
 		o, err = serv.uploadOrderTry(ctx, textPlainContent, userID)
 		if err != nil {
 			return models.Order{}, fmt.Errorf("uploadOrderTry fail: %w", err)
