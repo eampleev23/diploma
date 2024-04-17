@@ -13,7 +13,8 @@ import (
 func (serv *Services) GetStatusFromAccrual(ctx context.Context, textPlainContent string, userID int) (o models.Order, err error) {
 	serv.l.ZL.Debug("GetStatusFromAccrual has started..")
 	try := 1
-	for o.Status == "PROCESSING" || o.Status == "REGISTERED" {
+	//for o.Status == "PROCESSING" || o.Status == "REGISTERED" {
+	for o.Status != "PROCESSED" {
 		o, err = serv.uploadOrderTry(ctx, textPlainContent, userID)
 		if err != nil {
 			return models.Order{}, fmt.Errorf("uploadOrderTry fail: %w", err)
@@ -102,6 +103,5 @@ func (serv *Services) uploadOrderTry(ctx context.Context, textPlainContent strin
 		Status:     orderAccrualResp.Status,
 		Accrual:    orderAccrualResp.Accrual,
 	}
-
 	return o, err
 }
