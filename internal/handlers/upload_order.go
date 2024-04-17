@@ -51,7 +51,7 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 	newOrder := models.Order{
 		Number:     textPlainContent,
 		CustomerID: userID,
-		Status:     "REGISTERED",
+		Status:     "NEW",
 	}
 
 	_, err = h.serv.AddOrder(r.Context(), newOrder)
