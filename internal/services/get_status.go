@@ -94,7 +94,7 @@ func (serv *Services) uploadOrderTry(ctx context.Context, textPlainContent strin
 	var responseErr models.MyAPIError
 	var orderAccrualResp models.OrderAccrualResp
 
-	URL, err = url.JoinPath(serv.c.AccrualRunAddr+"/api/orders/", textPlainContent)
+	URL, err := url.JoinPath(serv.c.AccrualRunAddr+"/api/orders/", textPlainContent)
 	if err != nil {
 		return models.Order{}, fmt.Errorf("url.JoinPath fail: %w", err)
 	}
