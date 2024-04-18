@@ -67,6 +67,11 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusConflict)
 		return
 	}
+	if err != nil {
+		h.l.ZL.Debug("AddOrder fail..", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	_, err = h.serv.GetStatusFromAccrual(r.Context(), textPlainContent, userID)
 	if err != nil {
