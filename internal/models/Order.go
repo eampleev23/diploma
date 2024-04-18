@@ -3,6 +3,7 @@ package models
 import "time"
 
 // Order - модель заказа.
+// Decimal start
 type Order struct {
 	Number     string    `json:"number"`
 	ID         int       `json:"id"`
