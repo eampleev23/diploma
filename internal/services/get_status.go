@@ -39,7 +39,7 @@ func (serv *Services) GetStatusFromAccrual(ctx context.Context, textPlainContent
 			zap.String("status", orderBack.Status),
 			zap.Int("try", try),
 		)
-		time.NewTicker(10)
+		time.NewTicker(10) // не делает паузу
 		try++
 	}
 	serv.l.ZL.Debug("GetStatusFromAccrual has finished..")
@@ -59,37 +59,37 @@ func (serv *Services) uploadOrderTry(ctx context.Context, textPlainContent strin
 		// длительность максимального ожидания
 		SetRetryMaxWaitTime(90 * time.Second)
 
-	URL, err := url.JoinPath(serv.c.AccrualRunAddr, "/api/good")
-	if err != nil {
-		return models.Order{}, fmt.Errorf("url.JoinPath fail: %w", err)
-	}
+	//URL, err := url.JoinPath(serv.c.AccrualRunAddr, "/api/good")
+	//if err != nil {
+	//	return models.Order{}, fmt.Errorf("url.JoinPath fail: %w", err)
+	//}
 
-	_, err = client.R().
-		SetHeader("Content-Type", "application/json").
-		SetBody(`{"match":"Bork","reward":10,"reward_type":"%"}`).
-		Post(URL)
+	//_, err = client.R().
+	//	SetHeader("Content-Type", "application/json").
+	//	SetBody(`{"match":"Bork","reward":10,"reward_type":"%"}`).
+	//	Post(URL)
 
-	if err != nil {
-		return models.Order{}, fmt.Errorf("/api/good request fail: %w", err)
-	}
-	URL, err = url.JoinPath(serv.c.AccrualRunAddr, "/api/orders")
-	if err != nil {
-		return models.Order{}, fmt.Errorf("url.JoinPath fail: %w", err)
-	}
-	_, err = client.R().
-		SetHeader("Content-Type", "application/json").
-		SetBody(models.OrderAccrual{
-			Order: textPlainContent,
-			Goods: []models.Good{
-				{Description: "Чайник Bork", Price: 5000},
-				{Description: "Лейка Bork", Price: 7000},
-				{Description: "Пылесос Bork", Price: 18325},
-				{Description: "Столовые приборы Bork", Price: 27451},
-			},
-		}).Post(URL)
-	if err != nil {
-		return models.Order{}, fmt.Errorf("second request fail: %w", err)
-	}
+	//if err != nil {
+	//	return models.Order{}, fmt.Errorf("/api/good request fail: %w", err)
+	//}
+	//URL, err = url.JoinPath(serv.c.AccrualRunAddr, "/api/orders")
+	//if err != nil {
+	//	return models.Order{}, fmt.Errorf("url.JoinPath fail: %w", err)
+	//}
+	//_, err = client.R().
+	//	SetHeader("Content-Type", "application/json").
+	//	SetBody(models.OrderAccrual{
+	//		Order: textPlainContent,
+	//		Goods: []models.Good{
+	//			{Description: "Чайник Bork", Price: 5000},
+	//			{Description: "Лейка Bork", Price: 7000},
+	//			{Description: "Пылесос Bork", Price: 18325},
+	//			{Description: "Столовые приборы Bork", Price: 27451},
+	//		},
+	//	}).Post(URL)
+	//if err != nil {
+	//	return models.Order{}, fmt.Errorf("second request fail: %w", err)
+	//}
 
 	var responseErr models.MyAPIError
 	var orderAccrualResp models.OrderAccrualResp

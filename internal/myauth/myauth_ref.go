@@ -1,7 +1,6 @@
 package myauth
 
 import (
-	"context"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"log"
@@ -38,22 +37,23 @@ const (
 // Auth мидлвар, который проверяет авторизацию.
 func (au *Authorizer) Auth(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		_, err := r.Cookie("token")
-		if err != nil {
-			// Получаем логгер из контекста запроса
-			logger, ok := r.Context().Value(keyLogger).(*mlg.ZapLog)
-			if !ok {
-				log.Printf("Error getting logger")
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-			logger.ZL.Debug("No cookie", zap.String("err", err.Error()))
-			next.ServeHTTP(w, r)
-			return
-		}
-		// если кука уже установлена, то через контекст передаем 0
-		ctx := context.WithValue(r.Context(), KeyUserIDCtx, 0)
-		next.ServeHTTP(w, r.WithContext(ctx))
+		log.Println("here we are")
+		//_, err := r.Cookie("token")
+		//if err != nil {
+		//	// Получаем логгер из контекста запроса
+		//	logger, ok := r.Context().Value(keyLogger).(*mlg.ZapLog)
+		//	if !ok {
+		//		log.Printf("Error getting logger")
+		//		w.WriteHeader(http.StatusInternalServerError)
+		//		return
+		//	}
+		//	logger.ZL.Debug("No cookie", zap.String("err", err.Error()))
+		//	next.ServeHTTP(w, r)
+		//	return
+		//}
+		//// если кука уже установлена, то через контекст передаем 0
+		//ctx := context.WithValue(r.Context(), KeyUserIDCtx, 0)
+		//next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)
 }

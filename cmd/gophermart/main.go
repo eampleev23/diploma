@@ -61,6 +61,7 @@ func run() error {
 	mL.ZL.Info("Running server", zap.String("address", c.RanAddr))
 	r := chi.NewRouter()
 	r.Use(mL.RequestLogger)
+	//r.Use(au.Auth)
 	r.Post("/api/user/register", h.Register)
 	r.Post("/api/user/login", h.Authentication)
 	r.Post("/api/user/orders", h.UploadOrder)
