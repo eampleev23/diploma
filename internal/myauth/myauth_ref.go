@@ -3,13 +3,13 @@ package myauth
 import (
 	"context"
 	"fmt"
+	"github.com/golang-jwt/jwt/v4"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/mlg"
-	"github.com/golang-jwt/jwt/v4"
 	"go.uber.org/zap"
 )
 

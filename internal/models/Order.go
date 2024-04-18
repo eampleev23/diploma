@@ -8,7 +8,7 @@ type Order struct {
 	ID         int       `json:"id"`
 	CustomerID int       `json:"customer_id"`
 	Status     string    `json:"status"`
-	Accrual    int       `json:"accrual"`
+	Accrual    float64   `json:"accrual"`
 	UploadedAt time.Time `json:"uploaded_at"`
 }
 
@@ -16,7 +16,7 @@ type Order struct {
 type ResponseGetOwnerOrders struct {
 	Number     string    `json:"number"`
 	Status     string    `json:"status"`
-	Accrual    int       `json:"accrual"`
+	Accrual    float64   `json:"accrual"`
 	UploadedAt time.Time `json:"uploadedAt"`
 }
 
@@ -35,11 +35,11 @@ func GetResponseGetOwnerOrders(source []Order) (result []ResponseGetOwnerOrders,
 
 // ResponseGetBalance описывает элемент ответа пользователю на получение суммы его баллов и суммы списаний.
 type ResponseGetBalance struct {
-	Current   int `json:"current"`
-	Withdrawn int `json:"withdrawn"`
+	Current   float64 `json:"current"`
+	Withdrawn float64 `json:"withdrawn"`
 }
 
-func GetResponseBalance(current, withdrawn int) (resp ResponseGetBalance, err error) {
+func GetResponseBalance(current, withdrawn float64) (resp ResponseGetBalance, err error) {
 	resp = ResponseGetBalance{
 		Current:   current,
 		Withdrawn: withdrawn,

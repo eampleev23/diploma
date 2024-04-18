@@ -20,12 +20,14 @@ type Store interface {
 	GetUserByLoginAndPassword(ctx context.Context, userLoginReq models.UserLoginReq) (userBack models.User, err error)
 	// AddNewOrder добавляет новый заказ
 	AddNewOrder(ctx context.Context, newOrder models.Order) (orderBack models.Order, err error)
+	UpdateOrder(ctx context.Context, newOrder models.Order) (orderBack models.Order, err error)
 	GetUserIDByOrder(ctx context.Context, orderNumber string) (userID int, err error)
 	GetOrdersByUserID(ctx context.Context, userID int) (orders []models.Order, err error)
-	GetCurrentSumAccrual(ctx context.Context, userID int) (currentSumAccrual int, err error)
-	GetWithDraw(ctx context.Context, userID int) (withdraw int, err error)
+	GetCurrentSumAccrual(ctx context.Context, userID int) (currentSumAccrual float64, err error)
+	GetWithDraw(ctx context.Context, userID int) (withdraw float64, err error)
 	GetFullOrderByOrder(ctx context.Context, orderNumber string) (fullOrder models.Order, err error)
 	CreateWithdrawn(ctx context.Context, withdrawn models.Withdrawn) (success bool, withdrawnBack models.Withdrawn, err error)
+	GetWithdrawalsByUserID(ctx context.Context, userID int) (withdrawals []models.Withdrawn, err error)
 }
 
 func NewStorage(c *cnf.Config, l *mlg.ZapLog) (Store, error) {

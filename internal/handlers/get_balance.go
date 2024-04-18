@@ -33,8 +33,8 @@ func (h *Handlers) GetBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.l.ZL.Debug("got balance",
-		zap.Int("current", current),
-		zap.Int("withdraw", withdraw),
+		zap.Float64("current", current),
+		zap.Float64("withdraw", withdraw),
 	)
 	enc := json.NewEncoder(w)
 	w.Header().Set("content-type", "application/json")

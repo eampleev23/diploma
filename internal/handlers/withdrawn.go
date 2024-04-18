@@ -44,7 +44,7 @@ func (h *Handlers) Withdrawn(w http.ResponseWriter, r *http.Request) {
 	req.UserID = userID
 	h.l.ZL.Debug("got request",
 		zap.String("order", req.Order),
-		zap.Int("sum", req.Sum),
+		zap.Float64("sum", req.Sum),
 	)
 	err = h.serv.MoonCheck(req.Order)
 	if err != nil {

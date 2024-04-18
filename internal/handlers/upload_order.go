@@ -2,13 +2,11 @@ package handlers
 
 import (
 	"errors"
+	"github.com/eampleev23/diploma/internal/models"
+	"github.com/eampleev23/diploma/internal/store"
+	"go.uber.org/zap"
 	"net/http"
 	"strings"
-
-	"github.com/eampleev23/diploma/internal/store"
-
-	"github.com/eampleev23/diploma/internal/models"
-	"go.uber.org/zap"
 )
 
 // UploadOrder добавляет новый заказ в систему (заявка на получение баллов лояльности).
@@ -49,11 +47,13 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.l.ZL.Debug("Moon test success..")
+
 	newOrder := models.Order{
 		Number:     textPlainContent,
 		CustomerID: userID,
 		Status:     "NEW",
 	}
+
 	_, err = h.serv.AddOrder(r.Context(), newOrder)
 	if err != nil && errors.Is(err, store.ErrConflict) {
 		h.l.ZL.Debug("this order already exists")
@@ -67,5 +67,13 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusConflict)
 		return
 	}
+
+	_, err = h.serv.GetStatusFromAccrual(r.Context(), textPlainContent, userID)
+	if err != nil {
+		h.l.ZL.Debug("GetStatusFromAccrual fail..", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusAccepted)
 }
