@@ -28,7 +28,7 @@ func (serv *Services) GetStatusFromAccrual(ctx context.Context, textPlainContent
 			zap.String("status", o.Status),
 			zap.Int("try", try),
 		)
-		if o.Status == "REGISTERED" {
+		if o.Status == "REGISTERED" || o.Status == "" {
 			o.Status = "NEW"
 		}
 		orderBack, err := serv.s.UpdateOrder(ctx, o)
