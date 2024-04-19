@@ -27,6 +27,7 @@ func (serv *Services) GetStatusFromAccrual(ctx context.Context, textPlainContent
 		serv.l.ZL.Debug("Got status from accrual",
 			zap.String("status", o.Status),
 			zap.String("order", o.Number),
+			zap.Int("user ID", o.CustomerID),
 			zap.Int("try", try),
 		)
 		if o.Status == "REGISTERED" {
