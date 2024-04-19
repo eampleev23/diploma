@@ -91,5 +91,4 @@ func (h *Handlers) getFromAccrual(ctx context.Context, textPlainContent string, 
 	if err != nil {
 		h.l.ZL.Debug("getFromAccrual fail..", zap.Error(err))
 	}
-	return
 }
