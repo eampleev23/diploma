@@ -26,9 +26,10 @@ func (serv *Services) GetStatusFromAccrual(ctx context.Context, textPlainContent
 
 		serv.l.ZL.Debug("Got status from accrual",
 			zap.String("status", o.Status),
+			zap.String("order", o.Number),
 			zap.Int("try", try),
 		)
-		if o.Status == "REGISTERED" || o.Status == "" {
+		if o.Status == "REGISTERED" {
 			o.Status = "NEW"
 		}
 		orderBack, err := serv.s.UpdateOrder(ctx, o)
