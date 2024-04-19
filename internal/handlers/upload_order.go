@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"errors"
 	"github.com/eampleev23/diploma/internal/models"
 	"github.com/eampleev23/diploma/internal/store"
@@ -73,12 +74,22 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = h.serv.GetStatusFromAccrual(r.Context(), textPlainContent, userID)
-	if err != nil {
-		h.l.ZL.Debug("GetStatusFromAccrual fail..", zap.Error(err))
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	go h.getFromAccrual(r.Context(), textPlainContent, userID)
+
+	//_, err = h.serv.GetStatusFromAccrual(r.Context(), textPlainContent, userID)
+	//if err != nil {
+	//	h.l.ZL.Debug("GetStatusFromAccrual fail..", zap.Error(err))
+	//	w.WriteHeader(http.StatusInternalServerError)
+	//	return
+	//}
 
 	w.WriteHeader(http.StatusAccepted)
+}
+
+func (h *Handlers) getFromAccrual(ctx context.Context, textPlainContent string, userID int) {
+	_, err := h.serv.GetStatusFromAccrual(ctx, textPlainContent, userID)
+	if err != nil {
+		h.l.ZL.Debug("getFromAccrual fail..", zap.Error(err))
+	}
+	return
 }
