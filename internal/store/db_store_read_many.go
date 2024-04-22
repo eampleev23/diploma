@@ -10,7 +10,7 @@ import (
 
 func (d DBStore) GetOrdersByUserID(ctx context.Context, userID int) (orders []models.Order, err error) {
 	d.l.ZL.Debug("db_store / GetOrdersByUserID started..")
-	rows, err := d.dbConn.QueryContext(
+	rows, err := d.dbConn.QueryContext( //nolint:sqlclosecheck // not clear
 		ctx,
 		`SELECT 
     				id,number,customer_id,status,accrual,uploaded_at
@@ -44,9 +44,13 @@ func (d DBStore) GetOrdersByUserID(ctx context.Context, userID int) (orders []mo
 	return orders, nil
 }
 
-func (d DBStore) GetWithdrawalsByUserID(ctx context.Context, userID int) (withdeawals []models.Withdrawn, err error) {
+func (d DBStore) GetWithdrawalsByUserID(
+	ctx context.Context,
+	userID int) (
+	withdeawals []models.Withdrawn,
+	err error) {
 	d.l.ZL.Debug("db_store / GetWithdrawalsByUserID started..")
-	rows, err := d.dbConn.QueryContext(
+	rows, err := d.dbConn.QueryContext( //nolint:sqlclosecheck // not clear
 		ctx,
 		`SELECT 
     				id, sum, order_number, user_id, processed_at

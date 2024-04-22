@@ -56,5 +56,5 @@ func (d DBStore) GetFullOrderByOrder(
 	if err != nil {
 		return fullOrder, fmt.Errorf("faild to get full order by order's number %w", err)
 	}
-	return fullOrder, err
+	return fullOrder, nil
 }
