@@ -26,7 +26,8 @@ type Store interface {
 	GetCurrentSumAccrual(ctx context.Context, userID int) (currentSumAccrual float64, err error)
 	GetWithDraw(ctx context.Context, userID int) (withdraw float64, err error)
 	GetFullOrderByOrder(ctx context.Context, orderNumber string) (fullOrder models.Order, err error)
-	CreateWithdrawn(ctx context.Context, withdrawn models.Withdrawn) (success bool, withdrawnBack models.Withdrawn, err error)
+	CreateWithdrawn(ctx context.Context, withdrawn models.Withdrawn) (success bool,
+		withdrawnBack models.Withdrawn, err error)
 	GetWithdrawalsByUserID(ctx context.Context, userID int) (withdrawals []models.Withdrawn, err error)
 }
 
