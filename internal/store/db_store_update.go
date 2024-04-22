@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/eampleev23/diploma/internal/models"
 )
@@ -19,5 +20,8 @@ func (d DBStore) UpdateOrder(ctx context.Context, o models.Order) (orderBack mod
 		&orderBack.ID,
 		&orderBack.Status,
 		&orderBack.Accrual)
-	return orderBack, err
+	if err != nil {
+		return models.Order{}, fmt.Errorf("d.dbConn.QueryRow fail %w", err)
+	}
+	return orderBack, nil
 }
