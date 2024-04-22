@@ -3,14 +3,19 @@ package services
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"time"
+
 	"github.com/eampleev23/diploma/internal/models"
 	"github.com/go-resty/resty/v2"
 	"go.uber.org/zap"
-	"net/url"
-	"time"
 )
 
-func (serv *Services) GetStatusFromAccrual(ctx context.Context, textPlainContent string, userID int) (o models.Order, err error) {
+func (serv *Services) GetStatusFromAccrual(ctx context.Context,
+	textPlainContent string,
+	userID int) (
+	o models.Order,
+	err error) {
 	serv.l.ZL.Debug("GetStatusFromAccrual has started..")
 	try := 1
 	for o.Status != "PROCESSED" && o.Status != "INVALID" {
@@ -36,25 +41,29 @@ func (serv *Services) GetStatusFromAccrual(ctx context.Context, textPlainContent
 			zap.String("status", orderBack.Status),
 			zap.Int("try", try),
 		)
-		time.NewTicker(10) // не делает паузу
+		// Здесь ранее была не корректная задержка на 10 милисекунд, надо пересмотреть насколько она нужна.
 		try++
 	}
 	serv.l.ZL.Debug("GetStatusFromAccrual has finished..")
 	return o, err
 }
 
-func (serv *Services) uploadOrderTry(ctx context.Context, textPlainContent string, userID int) (o models.Order, err error) {
-
+func (serv *Services) uploadOrderTry(
+	ctx context.Context, //nolint:unparam // корректно всегда передавать контекст
+	textPlainContent string,
+	userID int) (
+	o models.Order,
+	err error) {
 	// Отправляем первый запрос в систему рассчета баллов лояльности
 	// создаём новый клиент
 	client := resty.New()
 	client.
 		// устанавливаем количество повторений
-		SetRetryCount(3).
+		SetRetryCount(3). //nolint:gomnd // no magic
 		// длительность ожидания между попытками
-		SetRetryWaitTime(30 * time.Second).
+		SetRetryWaitTime(30 * time.Second). //nolint:gomnd // no magic
 		// длительность максимального ожидания
-		SetRetryMaxWaitTime(90 * time.Second)
+		SetRetryMaxWaitTime(90 * time.Second) //nolint:gomnd // no magic
 
 	var responseErr models.MyAPIError
 	var orderAccrualResp models.OrderAccrualResp
@@ -83,5 +92,5 @@ func (serv *Services) uploadOrderTry(ctx context.Context, textPlainContent strin
 		Status:     orderAccrualResp.Status,
 		Accrual:    orderAccrualResp.Accrual,
 	}
-	return o, err
+	return o, nil
 }

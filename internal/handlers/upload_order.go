@@ -3,11 +3,12 @@ package handlers
 import (
 	"context"
 	"errors"
+	"net/http"
+	"strings"
+
 	"github.com/eampleev23/diploma/internal/models"
 	"github.com/eampleev23/diploma/internal/store"
 	"go.uber.org/zap"
-	"net/http"
-	"strings"
 )
 
 // UploadOrder добавляет новый заказ в систему (заявка на получение баллов лояльности).

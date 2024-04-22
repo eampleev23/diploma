@@ -3,7 +3,7 @@ package models
 import "time"
 
 // MyAPIError — описание ошибки при неверном запросе.
-type MyAPIError struct {
+type MyAPIError struct { //nolint:govet // not clear
 	Code      int       `json:"code"`
 	Message   string    `json:"message"`
 	Timestamp time.Time `json:"timestamp"`

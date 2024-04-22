@@ -5,7 +5,7 @@ import (
 )
 
 // Withdrawn - модель списания.
-type Withdrawn struct {
+type Withdrawn struct { //nolint:govet // not clear
 	Order       string    `json:"order"`
 	ID          int       `json:"id"`
 	Sum         float64   `json:"sum"`
@@ -14,9 +14,9 @@ type Withdrawn struct {
 }
 
 // ResponseGetOwnerWithdrawals описывает элемент ответа пользователю на получение всех его списаний.
-type ResponseGetOwnerWithdrawals struct {
-	Order       string    `json:"order"`
+type ResponseGetOwnerWithdrawals struct { //nolint:govet // not clear
 	Sum         float64   `json:"sum"`
+	Order       string    `json:"order"`
 	ProcessedAt time.Time `json:"processed_at"`
 }
 

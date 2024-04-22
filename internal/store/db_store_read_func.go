@@ -3,8 +3,9 @@ package store
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
 	"strings"
+
+	"go.uber.org/zap"
 )
 
 func (d DBStore) GetCurrentSumAccrual(ctx context.Context, userID int) (current float64, err error) {
