@@ -40,5 +40,5 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 		zap.Int("USER", withdrawnBack.UserID),
 		zap.String("ORDER", withdrawnBack.Order),
 	)
-	return success, isOrder, isEnough, err
+	return success, isOrder, isEnough, nil
 }
