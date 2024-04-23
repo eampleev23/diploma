@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 // MyAPIError — описание ошибки при неверном запросе.
 type MyAPIError struct { //nolint:govet // not clear
