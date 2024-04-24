@@ -5,6 +5,7 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/mlg"
 	"github.com/golang-migrate/migrate/v4"

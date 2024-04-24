@@ -12,8 +12,8 @@ import (
 // Authentication авторизует зарегистрированного пользователя.
 func (h *Handlers) Authentication(w http.ResponseWriter, r *http.Request) {
 	// Проверяем формат запроса
-	contentType := r.Header.Get("Content-Type")
-	supportsJSON := strings.Contains(contentType, "application/json")
+	contentType := r.Header.Get("Content-Type")                       //nolint:goconst //not needed
+	supportsJSON := strings.Contains(contentType, "application/json") //nolint:goconst //not needed
 	if !supportsJSON {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -30,7 +30,7 @@ func (h *Handlers) Authentication(w http.ResponseWriter, r *http.Request) {
 	// Проверяем, не авторизован ли пользователь, отправивший запрос.
 	userIDAlreadyAuth, isAuth, err := h.GetUserID(r)
 	if err != nil {
-		h.l.ZL.Error("GetUserID fail")
+		h.l.ZL.Error("GetUserID fail") //nolint:goconst //not needed
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

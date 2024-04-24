@@ -2,17 +2,18 @@ package handlers
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/eampleev23/diploma/internal/models"
 	"go.uber.org/zap"
-	"net/http"
 )
 
-// GetBalance возвращает текущую сумму баллов лояльности и сумму использованных баллов
+// GetBalance возвращает текущую сумму баллов лояльности и сумму использованных баллов.
 func (h *Handlers) GetBalance(w http.ResponseWriter, r *http.Request) {
 	h.l.ZL.Debug("Handler GetBalance has started..")
 	// Проверяем авторизацию
 	// Ппроверяем, не авторизован ли пользователь, отправивший запрос.
-	h.l.ZL.Debug("Checking auth..")
+	h.l.ZL.Debug("Checking auth..") //nolint:goconst //not needed
 	userID, isAuth, err := h.GetUserID(r)
 	if err != nil {
 		h.l.ZL.Error("GetUserID fail")
@@ -20,11 +21,11 @@ func (h *Handlers) GetBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !isAuth {
-		h.l.ZL.Debug("Unauthorized user..")
+		h.l.ZL.Debug("Unauthorized user..") //nolint:goconst //not needed
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	h.l.ZL.Debug("Authorized user:", zap.Int("userID", userID))
+	h.l.ZL.Debug("Authorized user:", zap.Int("userID", userID)) //nolint:goconst //not needed
 
 	current, withdraw, err := h.serv.GetBalance(r.Context(), userID)
 	if err != nil {

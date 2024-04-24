@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"context"
 	"errors"
+	"net/http"
+	"strings"
+
 	"github.com/eampleev23/diploma/internal/models"
 	"github.com/eampleev23/diploma/internal/store"
 	"go.uber.org/zap"
-	"net/http"
-	"strings"
 )
 
 // UploadOrder добавляет новый заказ в систему (заявка на получение баллов лояльности).
@@ -67,13 +69,18 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusConflict)
 		return
 	}
-
-	_, err = h.serv.GetStatusFromAccrual(r.Context(), textPlainContent, userID)
 	if err != nil {
-		h.l.ZL.Debug("GetStatusFromAccrual fail..", zap.Error(err))
+		h.l.ZL.Debug("AddOrder fail..", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
+	go h.getFromAccrual(r.Context(), textPlainContent, userID)
 	w.WriteHeader(http.StatusAccepted)
+}
+func (h *Handlers) getFromAccrual(ctx context.Context, textPlainContent string, userID int) {
+	_, err := h.serv.GetStatusFromAccrual(ctx, textPlainContent, userID)
+	if err != nil {
+		h.l.ZL.Debug("getFromAccrual fail..", zap.Error(err))
+	}
 }

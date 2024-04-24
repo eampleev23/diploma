@@ -4,15 +4,16 @@ go 1.21
 
 require (
 	github.com/go-chi/chi/v5 v5.0.11
+	github.com/go-resty/resty/v2 v2.12.0
 	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
 	github.com/jackc/pgx/v5 v5.5.1
+	github.com/shopspring/decimal v1.2.0
 	go.uber.org/zap v1.26.0
 )
 
 require (
-	github.com/go-resty/resty/v2 v2.12.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect

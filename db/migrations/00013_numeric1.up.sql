@@ -1,0 +1,6 @@
+BEGIN TRANSACTION;
+ALTER TABLE orders
+    ALTER COLUMN accrual TYPE numeric;
+ALTER TABLE withdraw
+    ALTER COLUMN sum TYPE numeric;
+COMMIT;
