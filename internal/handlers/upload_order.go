@@ -13,7 +13,6 @@ import (
 
 // UploadOrder добавляет новый заказ в систему (заявка на получение баллов лояльности).
 func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
-
 	// Проверяем формат запроса.
 	contentType := r.Header.Get("Content-Type")
 	textPlain := strings.Contains(contentType, "text/plain")
@@ -79,10 +78,6 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 	go h.getFromAccrual(r.Context(), textPlainContent, userID)
 	w.WriteHeader(http.StatusAccepted)
 }
-func uploadOrder(r *http.Request) {
-
-}
-
 func (h *Handlers) getFromAccrual(ctx context.Context, textPlainContent string, userID int) {
 	_, err := h.serv.GetStatusFromAccrual(ctx, textPlainContent, userID)
 	if err != nil {
