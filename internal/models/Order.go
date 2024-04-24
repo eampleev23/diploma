@@ -3,21 +3,21 @@ package models
 import "time"
 
 // Order - модель заказа.
-type Order struct { //nolint:govet // not clear
+type Order struct {
+	UploadedAt time.Time `json:"uploaded_at"`
 	Number     string    `json:"number"`
+	Status     string    `json:"status"`
 	ID         int       `json:"id"`
 	CustomerID int       `json:"customer_id"`
-	UploadedAt time.Time `json:"uploaded_at"`
-	Status     string    `json:"status"`
 	Accrual    float64   `json:"accrual"`
 }
 
 // ResponseGetOwnerOrders описывает элемент ответа пользователю на получение всех его ссылок.
-type ResponseGetOwnerOrders struct { //nolint:govet // not clear
-	Accrual    float64   `json:"accrual"`
+type ResponseGetOwnerOrders struct {
 	UploadedAt time.Time `json:"uploadedAt"`
 	Number     string    `json:"number"`
 	Status     string    `json:"status"`
+	Accrual    float64   `json:"accrual"`
 }
 
 func GetResponseGetOwnerOrders(source []Order) (result []ResponseGetOwnerOrders, err error) {

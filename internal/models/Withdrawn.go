@@ -5,19 +5,19 @@ import (
 )
 
 // Withdrawn - модель списания.
-type Withdrawn struct { //nolint:govet // not clear
+type Withdrawn struct {
+	ProcessedAt time.Time `json:"processed_at"`
 	Order       string    `json:"order"`
 	ID          int       `json:"id"`
 	Sum         float64   `json:"sum"`
 	UserID      int       `json:"user_id"`
-	ProcessedAt time.Time `json:"processed_at"`
 }
 
 // ResponseGetOwnerWithdrawals описывает элемент ответа пользователю на получение всех его списаний.
-type ResponseGetOwnerWithdrawals struct { //nolint:govet // not clear
-	Sum         float64   `json:"sum"`
-	Order       string    `json:"order"`
+type ResponseGetOwnerWithdrawals struct {
 	ProcessedAt time.Time `json:"processed_at"`
+	Order       string    `json:"order"`
+	Sum         float64   `json:"sum"`
 }
 
 func GetResponseGetOwnerWithdrawals(source []Withdrawn) (result []ResponseGetOwnerWithdrawals, err error) {

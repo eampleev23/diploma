@@ -5,10 +5,10 @@ import (
 )
 
 // MyAPIError — описание ошибки при неверном запросе.
-type MyAPIError struct { //nolint:govet // not clear
-	Code      int       `json:"code"`
-	Message   string    `json:"message"`
+type MyAPIError struct {
 	Timestamp time.Time `json:"timestamp"`
+	Message   string    `json:"message"`
+	Code      int       `json:"code"`
 }
 
 // OrderAccrual - модель заказа.
