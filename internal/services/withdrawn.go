@@ -3,6 +3,9 @@ package services
 import (
 	"context"
 	"fmt"
+	"strconv"
+
+	"github.com/shopspring/decimal"
 
 	"github.com/eampleev23/diploma/internal/models"
 	"go.uber.org/zap"
@@ -18,7 +21,17 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 	if err != nil {
 		return success, isOrder, isEnough, fmt.Errorf("serv.GetBalance fail.. %w", err)
 	}
-	balance := current - withdrawnSum
+	// Здесь теряются копейки, поэтому переводим в decimal
+	cDec := decimal.NewFromFloat(current)
+	wDec := decimal.NewFromFloat(withdrawnSum)
+	balanceDec := cDec.Sub(wDec)
+	balanceDecStr := balanceDec.String()
+	balance, err := strconv.ParseFloat(balanceDecStr, 64)
+	if err != nil {
+		return false, false, false, fmt.Errorf("ParseFloat fail: %w", err)
+	}
+	fmt.Println("balanceDec=", balanceDec)
+	fmt.Println("balance=", balance)
 	serv.l.ZL.Debug("Counted balance",
 		zap.Float64("balance", balance),
 		zap.Float64("current", current),
