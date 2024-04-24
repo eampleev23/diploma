@@ -41,7 +41,7 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 		isEnough = true
 	} else {
 		isEnough = false
-		return success, isOrder, isEnough, err
+		return success, isOrder, isEnough, nil
 	}
 	success, withdrawnBack, err := serv.s.CreateWithdrawn(ctx, withdrawn)
 	if err != nil {
