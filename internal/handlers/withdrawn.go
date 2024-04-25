@@ -10,7 +10,7 @@ import (
 )
 
 // Withdrawn списывает баллы лояльности.
-func (h *Handlers) Withdrawn(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) Withdrawn_old(w http.ResponseWriter, r *http.Request) {
 	h.l.ZL.Debug("Withdrawn handler has started..")
 	// Проверяем формат запроса
 	contentType := r.Header.Get("Content-Type")
