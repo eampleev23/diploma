@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+
 	"github.com/eampleev23/diploma/internal/models"
 	"go.uber.org/zap"
 )
@@ -26,7 +27,7 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 	serv.l.ZL.Debug("Дальше нужно понять хватает ли баланса для снятия")
 	if current-withdrawnSum < 0 {
 		// На балансе недостаточно денег
-		return fmt.Errorf("Недостаточно баллов для списания")
+		return fmt.Errorf("недостаточно баллов для списания")
 	} else {
 		_, withdrawnBack, err := serv.s.CreateWithdrawn(ctx, withdrawn)
 		if err != nil {
@@ -40,5 +41,4 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 		)
 		return nil
 	}
-
 }

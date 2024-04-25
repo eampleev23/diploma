@@ -58,5 +58,4 @@ func (h *Handlers) Withdrawn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.l.ZL.Debug("Success debit")
-
 }
