@@ -4,20 +4,20 @@ import "time"
 
 // Order - модель заказа.
 type Order struct {
+	UploadedAt time.Time `json:"uploaded_at"`
 	Number     string    `json:"number"`
+	Status     string    `json:"status"`
 	ID         int       `json:"id"`
 	CustomerID int       `json:"customer_id"`
-	Status     string    `json:"status"`
 	Accrual    float64   `json:"accrual"`
-	UploadedAt time.Time `json:"uploaded_at"`
 }
 
 // ResponseGetOwnerOrders описывает элемент ответа пользователю на получение всех его ссылок.
 type ResponseGetOwnerOrders struct {
+	UploadedAt time.Time `json:"uploadedAt"`
 	Number     string    `json:"number"`
 	Status     string    `json:"status"`
 	Accrual    float64   `json:"accrual"`
-	UploadedAt time.Time `json:"uploadedAt"`
 }
 
 func GetResponseGetOwnerOrders(source []Order) (result []ResponseGetOwnerOrders, err error) {

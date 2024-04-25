@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/eampleev23/diploma/internal/models"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 // GetOrders возвращает все заказы пользователя.

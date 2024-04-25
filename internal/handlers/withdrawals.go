@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/eampleev23/diploma/internal/models"
 	"go.uber.org/zap"
-	"net/http"
 )
 
-// Withdrawals отдает информацию о выводе средств
+// Withdrawals отдает информацию о выводе средств.
 func (h *Handlers) Withdrawals(w http.ResponseWriter, r *http.Request) {
 	h.l.ZL.Debug("Withdrawals handler has started..")
 	// Проверяем авторизацию

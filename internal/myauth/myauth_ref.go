@@ -1,12 +1,11 @@
 package myauth
 
 import (
-	"context"
 	"fmt"
-	"github.com/golang-jwt/jwt/v4"
-	"log"
 	"net/http"
 	"time"
+
+	"github.com/golang-jwt/jwt/v4"
 
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/mlg"
@@ -17,8 +16,6 @@ type Authorizer struct {
 	l *mlg.ZapLog
 	c *cnf.Config
 }
-
-var keyLogger mlg.Key = mlg.KeyLoggerCtx
 
 // Initialize инициализирует синглтон авторизовывальщика с секретным ключом.
 func Initialize(c *cnf.Config, l *mlg.ZapLog) (*Authorizer, error) {
@@ -38,22 +35,8 @@ const (
 // Auth мидлвар, который проверяет авторизацию.
 func (au *Authorizer) Auth(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		_, err := r.Cookie("token")
-		if err != nil {
-			// Получаем логгер из контекста запроса
-			logger, ok := r.Context().Value(keyLogger).(*mlg.ZapLog)
-			if !ok {
-				log.Printf("Error getting logger")
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-			logger.ZL.Debug("No cookie", zap.String("err", err.Error()))
-			next.ServeHTTP(w, r)
-			return
-		}
-		// если кука уже установлена, то через контекст передаем 0
-		ctx := context.WithValue(r.Context(), KeyUserIDCtx, 0)
-		next.ServeHTTP(w, r.WithContext(ctx))
+		// Здесь в перспективе будет мидлвар проверки авторизации, надо разобраться
+		// как использовать только в определенных хэндлерах
 	}
 	return http.HandlerFunc(fn)
 }
@@ -88,9 +71,9 @@ type Claims struct {
 
 // GetUserID возвращает ID пользователя.
 func (au *Authorizer) GetUserID(tokenString string) (int, error) {
-	// Создаем экземпляр структуры с утверждениями
+	// Создаем экземпляр структуры с утверждениями.
 	claims := &Claims{}
-	// Парсим из строки токена tokenString в структуру claims
+	// Парсим из строки токена tokenString в структуру claims.
 	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(au.c.SecretKey), nil
 	})

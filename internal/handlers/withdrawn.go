@@ -2,14 +2,15 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/eampleev23/diploma/internal/models"
-	"go.uber.org/zap"
 	"net/http"
 	"strings"
+
+	"github.com/eampleev23/diploma/internal/models"
+	"go.uber.org/zap"
 )
 
-// Withdrawn списывает баллы лояльности
-func (h *Handlers) Withdrawn(w http.ResponseWriter, r *http.Request) {
+// Withdrawn списывает баллы лояльности.
+func (h *Handlers) Withdrawn_old(w http.ResponseWriter, r *http.Request) {
 	h.l.ZL.Debug("Withdrawn handler has started..")
 	// Проверяем формат запроса
 	contentType := r.Header.Get("Content-Type")
@@ -51,13 +52,13 @@ func (h *Handlers) Withdrawn(w http.ResponseWriter, r *http.Request) {
 		h.l.ZL.Debug("Mooncheck fail..")
 		w.WriteHeader(http.StatusUnprocessableEntity)
 	}
-	sucсess, isOrder, isEnougph, err := h.serv.MakeWithdrawn(r.Context(), req)
+	success, isOrder, isEnougph, err := h.serv.MakeWithdrawn(r.Context(), req)
 	if err != nil {
 		h.l.ZL.Error("serv.MakeWithdrawn fail", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 	h.l.ZL.Debug("got MakeWithdrawn result",
-		zap.Bool("sucess", sucсess),
+		zap.Bool("sucess", success),
 		zap.Bool("isOrder", isOrder),
 		zap.Bool("isEnougph", isEnougph),
 	)
