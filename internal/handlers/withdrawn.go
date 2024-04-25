@@ -52,19 +52,11 @@ func (h *Handlers) Withdrawn(w http.ResponseWriter, r *http.Request) {
 		h.l.ZL.Debug("Mooncheck fail..")
 		w.WriteHeader(http.StatusUnprocessableEntity)
 	}
-	success, isOrder, isEnougph, err := h.serv.MakeWithdrawn(r.Context(), req)
-	if err != nil {
-		h.l.ZL.Error("serv.MakeWithdrawn fail", zap.Error(err))
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-	h.l.ZL.Debug("got MakeWithdrawn result",
-		zap.Bool("sucess", success),
-		zap.Bool("isOrder", isOrder),
-		zap.Bool("isEnougph", isEnougph),
-	)
-	if !isEnougph {
+	if err := h.serv.MakeWithdrawn(r.Context(), req); err != nil {
 		h.l.ZL.Info("Sum of the balance is not enough..", zap.Error(err))
 		w.WriteHeader(http.StatusPaymentRequired)
 		return
 	}
+	h.l.ZL.Debug("Success debit")
+
 }
