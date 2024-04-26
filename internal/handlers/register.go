@@ -37,7 +37,14 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 	var req models.UserRegReq
 	// Декодер работает потоково, кажется это правильнее + короче, чем анмаршал.
 	dec := json.NewDecoder(r.Body)
-	defer r.Body.Close()
+	defer func() {
+		err = r.Body.Close()
+		if err != nil {
+			h.l.ZL.Error("r.Body.Close fail", zap.Error(err))
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}()
 	if err := dec.Decode(&req); err != nil {
 		h.l.ZL.Info("cannot decode request JSON body", zap.Error(err))
 		w.WriteHeader(http.StatusBadRequest)
