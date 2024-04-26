@@ -53,22 +53,22 @@ func run() error {
 		}()
 	}
 	appServices := services.NewServices(appStorage, appConfig, logger, authorizer)
-	h, err := handlers.NewHandlers(appStorage, appConfig, logger, authorizer, appServices)
+	handlers, err := handlers.NewHandlers(appStorage, appConfig, logger, authorizer, appServices)
 	if err != nil {
 		return fmt.Errorf("handlers constructor's error: %w", err)
 	}
 
 	logger.ZL.Info("Running server", zap.String("address", appConfig.RanAddr))
-	r := chi.NewRouter()
-	r.Use(logger.RequestLogger)
-	r.Post("/api/user/register", h.Register)
-	r.Post("/api/user/login", h.Authentication)
-	r.Post("/api/user/orders", h.UploadOrder)
-	r.Get("/api/user/orders", h.GetOrders)
-	r.Get("/api/user/balance", h.GetBalance)
-	r.Post("/api/user/balance/withdraw", h.Withdrawn)
-	r.Get("/api/user/withdrawals", h.Withdrawals)
-	err = http.ListenAndServe(appConfig.RanAddr, r)
+	routes := chi.NewRouter()
+	routes.Use(logger.RequestLogger)
+	routes.Post("/api/user/register", handlers.Register)
+	routes.Post("/api/user/login", handlers.Authentication)
+	routes.Post("/api/user/orders", handlers.UploadOrder)
+	routes.Get("/api/user/orders", handlers.GetOrders)
+	routes.Get("/api/user/balance", handlers.GetBalance)
+	routes.Post("/api/user/balance/withdraw", handlers.Withdrawn)
+	routes.Get("/api/user/withdrawals", handlers.Withdrawals)
+	err = http.ListenAndServe(appConfig.RanAddr, routes)
 	if err != nil {
 		return fmt.Errorf("ошибка ListenAndServe: %w", err)
 	}
