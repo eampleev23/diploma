@@ -14,8 +14,8 @@ type Services struct {
 	au myauth.Authorizer
 }
 
-func NewServices(s store.Store, c *cnf.Config, l *mlg.ZapLog, au myauth.Authorizer) *Services {
-	services := &Services{
+func NewServices(s store.Store, c *cnf.Config, l *mlg.ZapLog, au myauth.Authorizer) Services {
+	services := Services{
 		s:  s,
 		c:  c,
 		l:  l,

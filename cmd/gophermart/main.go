@@ -23,44 +23,44 @@ func main() {
 }
 
 func run() error {
-	c, err := cnf.NewConfig()
+	appConfig, err := cnf.NewConfig()
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new config: %w", err)
 	}
 
-	mL, err := mlg.NewZapLogger(c.LogLevel)
+	logger, err := mlg.NewZapLogger(appConfig.LogLevel)
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new logger: %w", err)
 	}
-	mL.ZL.Debug("Logger success created..")
+	logger.ZL.Debug("Logger success created..")
 
-	au, err := myauth.Initialize(c, mL)
+	authorizer, err := myauth.Initialize(appConfig, logger)
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new authorizer: %w", err)
 	}
 
-	s, err := store.NewStorage(c, mL)
+	appStorage, err := store.NewStorage(appConfig, logger)
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new store: %w", err)
 	}
 
-	if len(c.DBDSN) != 0 {
+	if len(appConfig.DBDSN) != 0 {
 		// Отложенно закрываем соединение с бд.
 		defer func() {
-			if err := s.DBConnClose(); err != nil {
-				mL.ZL.Info("store failed to properly close the DB connection")
+			if err := appStorage.DBConnClose(); err != nil {
+				logger.ZL.Info("store failed to properly close the DB connection")
 			}
 		}()
 	}
-	serv := services.NewServices(s, c, mL, au)
-	h, err := handlers.NewHandlers(s, c, mL, au, *serv)
+	appServices := services.NewServices(appStorage, appConfig, logger, authorizer)
+	h, err := handlers.NewHandlers(appStorage, appConfig, logger, authorizer, appServices)
 	if err != nil {
 		return fmt.Errorf("handlers constructor's error: %w", err)
 	}
 
-	mL.ZL.Info("Running server", zap.String("address", c.RanAddr))
+	logger.ZL.Info("Running server", zap.String("address", appConfig.RanAddr))
 	r := chi.NewRouter()
-	r.Use(mL.RequestLogger)
+	r.Use(logger.RequestLogger)
 	r.Post("/api/user/register", h.Register)
 	r.Post("/api/user/login", h.Authentication)
 	r.Post("/api/user/orders", h.UploadOrder)
@@ -68,7 +68,7 @@ func run() error {
 	r.Get("/api/user/balance", h.GetBalance)
 	r.Post("/api/user/balance/withdraw", h.Withdrawn)
 	r.Get("/api/user/withdrawals", h.Withdrawals)
-	err = http.ListenAndServe(c.RanAddr, r)
+	err = http.ListenAndServe(appConfig.RanAddr, r)
 	if err != nil {
 		return fmt.Errorf("ошибка ListenAndServe: %w", err)
 	}
