@@ -61,7 +61,6 @@ func (d DBStore) AddNewOrder(ctx context.Context, newOrder models.Order) (orderB
 func (d DBStore) CreateWithdrawn(
 	ctx context.Context,
 	withdrawn models.Withdrawn) (
-	success bool,
 	withdrawnBack models.Withdrawn,
 	err error) {
 	d.l.ZL.Debug("db CreateWithdrawn has started..")
@@ -87,8 +86,7 @@ func (d DBStore) CreateWithdrawn(
 		err = ErrConflict
 	}
 	if err != nil {
-		return success, withdrawnBack, fmt.Errorf("QueryRow fail: %w", err)
+		return withdrawnBack, fmt.Errorf("QueryRow fail: %w", err)
 	}
-	success = true
-	return success, withdrawnBack, err
+	return withdrawnBack, err
 }

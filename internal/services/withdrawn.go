@@ -29,7 +29,7 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 		// На балансе недостаточно денег
 		return fmt.Errorf("недостаточно баллов для списания")
 	} else {
-		_, withdrawnBack, err := serv.s.CreateWithdrawn(ctx, withdrawn)
+		withdrawnBack, err := serv.s.CreateWithdrawn(ctx, withdrawn)
 		if err != nil {
 			return fmt.Errorf("CreateWithdrawn fail: %w", err)
 		}
