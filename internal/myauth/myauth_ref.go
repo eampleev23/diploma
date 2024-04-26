@@ -13,15 +13,15 @@ import (
 )
 
 type Authorizer struct {
-	l *mlg.ZapLog
-	c *cnf.Config
+	logger *mlg.ZapLog
+	config *cnf.Config
 }
 
 // Initialize инициализирует синглтон авторизовывальщика с секретным ключом.
 func Initialize(c *cnf.Config, l *mlg.ZapLog) (Authorizer, error) {
 	au := Authorizer{
-		c: c,
-		l: l,
+		config: c,
+		logger: l,
 	}
 	return au, nil
 }
@@ -42,16 +42,16 @@ func (au *Authorizer) Auth(next http.Handler) http.Handler {
 }
 
 func (au *Authorizer) SetNewCookie(w http.ResponseWriter, userID int) (err error) {
-	au.l.ZL.Debug("setNewCookie got userID", zap.Int("userID", userID))
+	au.logger.ZL.Debug("setNewCookie got userID", zap.Int("userID", userID))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			// Когда создан токен.
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(au.c.TokenExp)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(au.config.TokenExp)),
 		},
 		// Собственное утверждение.
 		UserID: userID,
 	})
-	tokenString, err := token.SignedString([]byte(au.c.SecretKey))
+	tokenString, err := token.SignedString([]byte(au.config.SecretKey))
 	if err != nil {
 		return fmt.Errorf("token.SignedString fail.. %w", err)
 	}
@@ -75,10 +75,10 @@ func (au *Authorizer) GetUserID(tokenString string) (int, error) {
 	claims := &Claims{}
 	// Парсим из строки токена tokenString в структуру claims.
 	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(au.c.SecretKey), nil
+		return []byte(au.config.SecretKey), nil
 	})
 	if err != nil {
-		au.l.ZL.Info("Failed in case to get ownerId from token ", zap.Error(err))
+		au.logger.ZL.Info("Failed in case to get ownerId from token ", zap.Error(err))
 	}
 
 	return claims.UserID, nil

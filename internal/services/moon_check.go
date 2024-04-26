@@ -36,7 +36,7 @@ func (serv *Services) MoonCheck(inpStr string) (err error) {
 		return err
 	} else {
 		// Нечетное.
-		serv.l.ZL.Debug("it's odd")
+		serv.logger.ZL.Debug("it's odd")
 		err = serv.forOdd(numbers)
 		return err
 	}
@@ -65,7 +65,7 @@ func (serv *Services) forEven(numbers []int64) (err error) {
 	for _, v := range numbers {
 		sum += v
 	}
-	serv.l.ZL.Debug("forEven / Сумма значений всех цифр в результате:", zap.Int64("sum", sum))
+	serv.logger.ZL.Debug("forEven / Сумма значений всех цифр в результате:", zap.Int64("sum", sum))
 	if sum%10 != 0 {
 		return fmt.Errorf("moon test fail")
 	}
@@ -75,7 +75,7 @@ func (serv *Services) forEven(numbers []int64) (err error) {
 func (serv *Services) forOdd(numbers []int64) (err error) {
 	// Если нечетное количество цифр в номере заказа.
 	// Значит перебираем четные номера
-	serv.l.ZL.Debug("forOdd start..")
+	serv.logger.ZL.Debug("forOdd start..")
 	for i := 1; i < len(numbers); i += 2 {
 		// serv.l.ZL.Debug("", zap.Int64("v", numbers[i]))
 		result := numbers[i] * 2 //nolint:gomnd //такой алгоритм луны

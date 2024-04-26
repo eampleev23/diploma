@@ -11,8 +11,8 @@ func (serv *Services) GetOrdersByUserID(
 	ctx context.Context, userID int) (
 	orders []models.Order, err error) {
 	// Возвращает заказы пользователя по ID
-	serv.l.ZL.Debug("services / GetOrdersByUserID started..")
-	orders, err = serv.s.GetOrdersByUserID(ctx, userID)
+	serv.logger.ZL.Debug("services / GetOrdersByUserID started..")
+	orders, err = serv.store.GetOrdersByUserID(ctx, userID)
 	if err != nil {
 		return orders, fmt.Errorf("store method fail: %w", err)
 	}

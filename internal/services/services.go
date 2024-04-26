@@ -8,18 +8,18 @@ import (
 )
 
 type Services struct {
-	s  store.Store
-	c  *cnf.Config
-	l  *mlg.ZapLog
-	au myauth.Authorizer
+	store      store.Store
+	config     *cnf.Config
+	logger     *mlg.ZapLog
+	authorizer myauth.Authorizer
 }
 
 func NewServices(s store.Store, c *cnf.Config, l *mlg.ZapLog, au myauth.Authorizer) Services {
 	services := Services{
-		s:  s,
-		c:  c,
-		l:  l,
-		au: au,
+		store:      s,
+		config:     c,
+		logger:     l,
+		authorizer: au,
 	}
 	return services
 }
