@@ -23,38 +23,38 @@ func (h *Handlers) Authentication(w http.ResponseWriter, r *http.Request) {
 	// Декодер работает потоково, кажется это правильнее + короче, чем анмаршал.
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&req); err != nil {
-		h.l.ZL.Info("cannot decode request JSON body", zap.Error(err))
+		h.logger.ZL.Info("cannot decode request JSON body", zap.Error(err))
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	// Проверяем, не авторизован ли пользователь, отправивший запрос.
 	userIDAlreadyAuth, isAuth, err := h.GetUserID(r)
 	if err != nil {
-		h.l.ZL.Error("GetUserID fail") //nolint:goconst //not needed
+		h.logger.ZL.Error("GetUserID fail") //nolint:goconst //not needed
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	h.l.ZL.Debug("isAuth", zap.Bool("auth", isAuth))
+	h.logger.ZL.Debug("isAuth", zap.Bool("auth", isAuth))
 
-	authUser, err := h.s.GetUserByLoginAndPassword(r.Context(), req)
+	authUser, err := h.store.GetUserByLoginAndPassword(r.Context(), req)
 	if err != nil {
-		h.l.ZL.Info("User is not found", zap.Error(err))
+		h.logger.ZL.Info("User is not found", zap.Error(err))
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
 	if isAuth && userIDAlreadyAuth != authUser.ID {
-		h.l.ZL.Error("Already authorized user trying to login by another one", zap.Error(err))
+		h.logger.ZL.Error("Already authorized user trying to login by another one", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	err = h.au.SetNewCookie(w, authUser.ID)
+	err = h.authorizer.SetNewCookie(w, authUser.ID)
 	if err != nil {
-		h.l.ZL.Error("SetNewCookie fail", zap.Error(err))
+		h.logger.ZL.Error("SetNewCookie fail", zap.Error(err))
 		w.WriteHeader(http.StatusOK)
 		return
 	}
-	h.l.ZL.Debug("Success authorization, user id -", zap.Int("authUser.ID", authUser.ID))
-	h.l.ZL.Debug("Success authorization, user login -", zap.String("authUser.Login", authUser.Login))
+	h.logger.ZL.Debug("Success authorization, user id -", zap.Int("authUser.ID", authUser.ID))
+	h.logger.ZL.Debug("Success authorization, user login -", zap.String("authUser.Login", authUser.Login))
 }

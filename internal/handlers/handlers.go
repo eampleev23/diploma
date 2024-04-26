@@ -11,11 +11,11 @@ import (
 )
 
 type Handlers struct {
-	s    store.Store
-	c    *cnf.Config
-	l    *mlg.ZapLog
-	au   myauth.Authorizer
-	serv services.Services
+	store      store.Store
+	config     *cnf.Config
+	logger     *mlg.ZapLog
+	authorizer myauth.Authorizer
+	services   services.Services
 }
 
 func NewHandlers(
@@ -27,21 +27,21 @@ func NewHandlers(
 	*Handlers,
 	error) {
 	return &Handlers{
-		s:    s,
-		c:    c,
-		l:    l,
-		au:   au,
-		serv: serv,
+		store:      s,
+		config:     c,
+		logger:     l,
+		authorizer: au,
+		services:   serv,
 	}, nil
 }
 
 func (h *Handlers) GetUserID(r *http.Request) (userID int, isAuth bool, err error) {
-	h.l.ZL.Debug("GetUserID started.. ")
+	h.logger.ZL.Debug("GetUserID started.. ")
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		return 0, false, nil //nolint:nilerr // нужно будет исправить логику
 	}
-	userID, err = h.au.GetUserID(cookie.Value)
+	userID, err = h.authorizer.GetUserID(cookie.Value)
 	if err != nil {
 		return 0, false, nil //nolint:nilerr // нужно будет исправить логику
 	}

@@ -23,32 +23,32 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 	// Ппроверяем, не авторизован ли пользователь, отправивший запрос.
 	userID, isAuth, err := h.GetUserID(r)
 	if err != nil {
-		h.l.ZL.Error("GetUserID fail")
+		h.logger.ZL.Error("GetUserID fail")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	if !isAuth {
-		h.l.ZL.Debug("Unaithorized user")
+		h.logger.ZL.Debug("Unaithorized user")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	h.l.ZL.Debug("isAuth", zap.Bool("auth", isAuth))
-	h.l.ZL.Debug("", zap.Int("userID", userID))
-	textPlainContent, err := h.serv.GetTextPlain(r)
+	h.logger.ZL.Debug("isAuth", zap.Bool("auth", isAuth))
+	h.logger.ZL.Debug("", zap.Int("userID", userID))
+	textPlainContent, err := h.services.GetTextPlain(r)
 	if err != nil {
-		h.l.ZL.Error("GetTextPlain fail")
+		h.logger.ZL.Error("GetTextPlain fail")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	h.l.ZL.Debug("", zap.String("textPlainContent", textPlainContent))
+	h.logger.ZL.Debug("", zap.String("textPlainContent", textPlainContent))
 	// Далее проверяем алгоритмом луна и возвращаем 422 если не верный формат номера заказа.
-	err = h.serv.MoonCheck(textPlainContent)
+	err = h.services.MoonCheck(textPlainContent)
 	if err != nil {
-		h.l.ZL.Debug("MoonTest fail", zap.Error(err))
+		h.logger.ZL.Debug("MoonTest fail", zap.Error(err))
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
-	h.l.ZL.Debug("Moon test success..")
+	h.logger.ZL.Debug("Moon test success..")
 
 	newOrder := models.Order{
 		Number:     textPlainContent,
@@ -56,10 +56,10 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		Status:     "NEW",
 	}
 
-	_, err = h.serv.AddOrder(r.Context(), newOrder)
+	_, err = h.services.AddOrder(r.Context(), newOrder)
 	if err != nil && errors.Is(err, store.ErrConflict) {
-		h.l.ZL.Debug("this order already exists")
-		confUserID, _ := h.serv.GetUserIDByOrderNumber(r.Context(), textPlainContent)
+		h.logger.ZL.Debug("this order already exists")
+		confUserID, _ := h.services.GetUserIDByOrderNumber(r.Context(), textPlainContent)
 		if confUserID == userID {
 			// Заказ был создан текущим пользователем
 			w.WriteHeader(http.StatusOK)
@@ -70,7 +70,7 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		h.l.ZL.Debug("AddOrder fail..", zap.Error(err))
+		h.logger.ZL.Debug("AddOrder fail..", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -80,8 +80,8 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) getFromAccrual(ctx context.Context, textPlainContent string, userID int) {
-	_, err := h.serv.GetStatusFromAccrual(ctx, textPlainContent, userID)
+	_, err := h.services.GetStatusFromAccrual(ctx, textPlainContent, userID)
 	if err != nil {
-		h.l.ZL.Debug("getFromAccrual fail..", zap.Error(err))
+		h.logger.ZL.Debug("getFromAccrual fail..", zap.Error(err))
 	}
 }
