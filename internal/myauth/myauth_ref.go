@@ -18,8 +18,8 @@ type Authorizer struct {
 }
 
 // Initialize инициализирует синглтон авторизовывальщика с секретным ключом.
-func Initialize(c *cnf.Config, l *mlg.ZapLog) (*Authorizer, error) {
-	au := &Authorizer{
+func Initialize(c *cnf.Config, l *mlg.ZapLog) (Authorizer, error) {
+	au := Authorizer{
 		c: c,
 		l: l,
 	}
