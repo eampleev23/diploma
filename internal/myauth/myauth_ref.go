@@ -36,10 +36,6 @@ const (
 // Auth мидлвар, который проверяет авторизацию.
 func (au *Authorizer) Auth(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		au.logger.ZL.Debug("HERE WE ARE!!!")
-		// Здесь в перспективе будет мидлвар проверки авторизации, надо разобраться
-		// как использовать только в определенных хэндлерах
-		// Ппроверяем, не авторизован ли пользователь, отправивший запрос.
 		userID, err := au.GetUserID(r)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)

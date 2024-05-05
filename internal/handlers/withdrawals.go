@@ -10,18 +10,12 @@ import (
 
 // Withdrawals отдает информацию о выводе средств.
 func (h *Handlers) Withdrawals(w http.ResponseWriter, r *http.Request) {
-	h.logger.ZL.Debug("Withdrawals handler has started..")
-	// Проверяем авторизацию
-	// Ппроверяем, не авторизован ли пользователь, отправивший запрос.
-	h.logger.ZL.Debug("Checking auth..")
 	userID, ok := r.Context().Value(keyUserIDCtx).(int)
 	if !ok {
-		h.logger.ZL.Error("Error getting user ID from context")
+		h.logger.ZL.Error("Fail getting user ID from context")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	h.logger.ZL.Debug("Authorized user:", zap.Int("userID", userID))
-
 	withdrawals, err := h.services.GetWithdrawalsByUserID(r.Context(), userID)
 	if err != nil {
 		h.logger.ZL.Error("GetWithdrawalsByUserID fail")
@@ -29,7 +23,6 @@ func (h *Handlers) Withdrawals(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(withdrawals) == 0 {
-		h.logger.ZL.Debug("No data for response")
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}

@@ -9,7 +9,6 @@ import (
 )
 
 func (d DBStore) GetOrdersByUserID(ctx context.Context, userID int) (orders []models.Order, err error) {
-	d.l.ZL.Debug("db_store / GetOrdersByUserID started..")
 	rows, err := d.dbConn.QueryContext( //nolint:sqlclosecheck // not clear
 		ctx,
 		`SELECT 

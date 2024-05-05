@@ -10,18 +10,12 @@ import (
 
 // GetOrders возвращает все заказы пользователя.
 func (h *Handlers) GetOrders(w http.ResponseWriter, r *http.Request) {
-	h.logger.ZL.Debug("GetOrders has started..")
-	// Проверяем авторизацию
-	// Ппроверяем, не авторизован ли пользователь, отправивший запрос.
-	h.logger.ZL.Debug("Checking auth..")
 	userID, ok := r.Context().Value(keyUserIDCtx).(int)
 	if !ok {
 		h.logger.ZL.Error("Error getting user ID from context")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	h.logger.ZL.Debug("Authorized user:", zap.Int("userID", userID))
-
 	orders, err := h.services.GetOrdersByUserID(r.Context(), userID)
 	if err != nil {
 		h.logger.ZL.Error("GetOrdersByUserID fail")
@@ -29,7 +23,6 @@ func (h *Handlers) GetOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(orders) == 0 {
-		h.logger.ZL.Debug("No data for response")
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}

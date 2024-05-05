@@ -71,7 +71,6 @@ func (h *Handlers) GetRoutes() (routes *chi.Mux) {
 }
 
 func (h *Handlers) GetUserID(r *http.Request) (userID int, err error) {
-	h.logger.ZL.Debug("GetUserID started.. ")
 	userID, err = h.authorizer.GetUserID(r)
 	if err != nil {
 		return 0, fmt.Errorf("h.authorizer.GetUserID fail %w", err)

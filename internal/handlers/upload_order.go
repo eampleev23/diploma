@@ -20,7 +20,6 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	// Здесь надо получить ид пользователя через контекст
 	userID, ok := r.Context().Value(keyUserIDCtx).(int)
 	if !ok {
 		h.logger.ZL.Error("Error getting user ID from context")

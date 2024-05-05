@@ -8,7 +8,6 @@ import (
 	"github.com/eampleev23/diploma/internal/models"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5/pgconn"
-	"go.uber.org/zap"
 )
 
 // ErrConflict ошибка, которую используем для сигнала о нарушении целостности данных.
@@ -63,11 +62,6 @@ func (d DBStore) CreateWithdrawn(
 	withdrawn models.Withdrawn) (
 	withdrawnBack models.Withdrawn,
 	err error) {
-	d.l.ZL.Debug("db CreateWithdrawn has started..")
-	d.l.ZL.Debug("got withdrawn",
-		zap.String("order", withdrawn.Order),
-		zap.Float64("sum", withdrawn.Sum),
-	)
 	err = d.dbConn.QueryRow( //nolint:execinquery // нужен скан
 		`INSERT INTO withdraw
 				(sum, order_number, user_id)

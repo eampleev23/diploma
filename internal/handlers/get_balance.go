@@ -10,27 +10,18 @@ import (
 
 // GetBalance возвращает текущую сумму баллов лояльности и сумму использованных баллов.
 func (h *Handlers) GetBalance(w http.ResponseWriter, r *http.Request) {
-	h.logger.ZL.Debug("Handler GetBalance has started..")
-	// Проверяем авторизацию
-	// Ппроверяем, не авторизован ли пользователь, отправивший запрос.
-	h.logger.ZL.Debug("Checking auth..") //nolint:goconst //not needed
 	userID, ok := r.Context().Value(keyUserIDCtx).(int)
 	if !ok {
 		h.logger.ZL.Error("Error getting user ID from context")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	h.logger.ZL.Debug("Authorized user:", zap.Int("userID", userID)) //nolint:goconst //not needed
 	current, withdraw, err := h.services.GetBalance(r.Context(), userID)
 	if err != nil {
 		h.logger.ZL.Error("Service GetBalance fail", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	h.logger.ZL.Debug("got balance",
-		zap.Float64("current", current),
-		zap.Float64("withdraw", withdraw),
-	)
 	enc := json.NewEncoder(w)
 	w.Header().Set("content-type", "application/json")
 	response := models.GetResponseBalance(current, withdraw)
