@@ -33,11 +33,7 @@ func (h *Handlers) GetBalance(w http.ResponseWriter, r *http.Request) {
 	)
 	enc := json.NewEncoder(w)
 	w.Header().Set("content-type", "application/json")
-	response, err := models.GetResponseBalance(current, withdraw)
-	if err != nil {
-		h.logger.ZL.Info("GetResponseGetOwnerOrders fail", zap.Error(err))
-		return
-	}
+	response := models.GetResponseBalance(current, withdraw)
 	if err := enc.Encode(response); err != nil {
 		h.logger.ZL.Info("fail encoding response in handler", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)

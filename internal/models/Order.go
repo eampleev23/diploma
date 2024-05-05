@@ -39,10 +39,10 @@ type ResponseGetBalance struct {
 	Withdrawn float64 `json:"withdrawn"`
 }
 
-func GetResponseBalance(current, withdrawn float64) (resp ResponseGetBalance, err error) {
+func GetResponseBalance(current, withdrawn float64) (resp ResponseGetBalance) {
 	resp = ResponseGetBalance{
 		Current:   current,
 		Withdrawn: withdrawn,
 	}
-	return resp, nil
+	return resp
 }
