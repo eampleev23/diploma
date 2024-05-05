@@ -28,7 +28,7 @@ func (h *Handlers) Authentication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Проверяем, не авторизован ли пользователь, отправивший запрос.
-	userIDAlreadyAuth, isAuth, err := h.GetUserID(r)
+	userIDAlreadyAuth, err := h.GetUserID(r)
 	if err != nil {
 		h.logger.ZL.Error("GetUserID fail") //nolint:goconst //not needed
 		w.WriteHeader(http.StatusInternalServerError)

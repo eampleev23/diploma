@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/eampleev23/diploma/internal/cnf"
@@ -35,15 +36,15 @@ func NewHandlers(
 	}, nil
 }
 
-func (h *Handlers) GetUserID(r *http.Request) (userID int, isAuth bool, err error) {
+func (h *Handlers) GetUserID(r *http.Request) (userID int, err error) {
 	h.logger.ZL.Debug("GetUserID started.. ")
 	cookie, err := r.Cookie("token")
 	if err != nil {
-		return 0, false, nil //nolint:nilerr // нужно будет исправить логику
+		return 0, fmt.Errorf("no cookies by name token %w", err)
 	}
 	userID, err = h.authorizer.GetUserID(cookie.Value)
 	if err != nil {
-		return 0, false, nil //nolint:nilerr // нужно будет исправить логику
+		return 0, fmt.Errorf("h.authorizer.GetUserID fail %w", err)
 	}
-	return userID, true, nil
+	return userID, nil
 }
