@@ -20,7 +20,6 @@ func (h *Handlers) GetBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.logger.ZL.Debug("Authorized user:", zap.Int("userID", userID)) //nolint:goconst //not needed
-
 	current, withdraw, err := h.services.GetBalance(r.Context(), userID)
 	if err != nil {
 		h.logger.ZL.Error("Service GetBalance fail", zap.Error(err))

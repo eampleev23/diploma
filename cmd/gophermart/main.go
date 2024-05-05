@@ -53,12 +53,12 @@ func run() error {
 		}()
 	}
 	appServices := services.NewServices(appStorage, appConfig, logger, authorizer)
-	handlers, err := handlers.NewHandlers(appStorage, appConfig, logger, authorizer, appServices)
+	appHandlers, err := handlers.NewHandlers(appStorage, appConfig, logger, authorizer, appServices)
 	if err != nil {
 		return fmt.Errorf("handlers constructor's error: %w", err)
 	}
 	logger.ZL.Info("Running server", zap.String("address", appConfig.RanAddr))
-	routes := handlers.GetRoutes()
+	routes := appHandlers.GetRoutes()
 	err = http.ListenAndServe(appConfig.RanAddr, routes)
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("ошибка ListenAndServe: %w", err)
