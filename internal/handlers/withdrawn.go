@@ -21,10 +21,10 @@ func (h *Handlers) Withdrawn(w http.ResponseWriter, r *http.Request) {
 	}
 	// Проверяем авторизацию
 	// Ппроверяем, не авторизован ли пользователь, отправивший запрос.
-	h.logger.ZL.Debug("Checking auth..")
-	userID, err := h.GetUserID(r)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
+	userID, ok := r.Context().Value(keyUserIDCtx).(int)
+	if !ok {
+		h.logger.ZL.Error("Error getting user ID from context")
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	h.logger.ZL.Debug("Authorized user:", zap.Int("userID", userID))
@@ -41,7 +41,7 @@ func (h *Handlers) Withdrawn(w http.ResponseWriter, r *http.Request) {
 		zap.String("order", req.Order),
 		zap.Float64("sum", req.Sum),
 	)
-	err = h.services.MoonCheck(req.Order)
+	err := h.services.MoonCheck(req.Order)
 	if err != nil {
 		h.logger.ZL.Debug("Mooncheck fail..")
 		w.WriteHeader(http.StatusUnprocessableEntity)

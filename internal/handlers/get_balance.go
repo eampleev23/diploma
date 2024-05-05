@@ -14,9 +14,10 @@ func (h *Handlers) GetBalance(w http.ResponseWriter, r *http.Request) {
 	// Проверяем авторизацию
 	// Ппроверяем, не авторизован ли пользователь, отправивший запрос.
 	h.logger.ZL.Debug("Checking auth..") //nolint:goconst //not needed
-	userID, err := h.GetUserID(r)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
+	userID, ok := r.Context().Value(keyUserIDCtx).(int)
+	if !ok {
+		h.logger.ZL.Error("Error getting user ID from context")
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	h.logger.ZL.Debug("Authorized user:", zap.Int("userID", userID)) //nolint:goconst //not needed
