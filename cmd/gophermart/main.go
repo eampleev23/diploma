@@ -1,10 +1,8 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"log"
-	"net/http"
-
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/handlers"
 	"github.com/eampleev23/diploma/internal/mlg"
@@ -13,6 +11,8 @@ import (
 	"github.com/eampleev23/diploma/internal/store"
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
+	"log"
+	"net/http"
 )
 
 func main() {
@@ -69,7 +69,7 @@ func run() error {
 	routes.Post("/api/user/balance/withdraw", handlers.Withdrawn)
 	routes.Get("/api/user/withdrawals", handlers.Withdrawals)
 	err = http.ListenAndServe(appConfig.RanAddr, routes)
-	if err != nil {
+	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("ошибка ListenAndServe: %w", err)
 	}
 	return nil
