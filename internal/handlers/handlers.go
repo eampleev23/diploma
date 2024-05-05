@@ -38,6 +38,8 @@ func NewHandlers(
 	}, nil
 }
 
+var keyUserIDCtx myauth.Key = myauth.KeyUserIDCtx
+
 func (h *Handlers) GetRoutes() (routes *chi.Mux) {
 	routes = chi.NewRouter()
 
@@ -45,6 +47,7 @@ func (h *Handlers) GetRoutes() (routes *chi.Mux) {
 		r.Use(h.logger.RequestLogger)
 		r.Group(func(r chi.Router) {
 			r.Route("/api/user", func(r chi.Router) {
+				r.Use(h.authorizer.Auth)
 				r.Method("POST", "/orders", http.HandlerFunc(h.UploadOrder))
 				r.Method("GET", "/orders", http.HandlerFunc(h.GetOrders))
 				r.Method("GET", "/balance", http.HandlerFunc(h.GetBalance))
@@ -69,11 +72,7 @@ func (h *Handlers) GetRoutes() (routes *chi.Mux) {
 
 func (h *Handlers) GetUserID(r *http.Request) (userID int, err error) {
 	h.logger.ZL.Debug("GetUserID started.. ")
-	cookie, err := r.Cookie("token")
-	if err != nil {
-		return 0, fmt.Errorf("no cookies by name token %w", err)
-	}
-	userID, err = h.authorizer.GetUserID(cookie.Value)
+	userID, err = h.authorizer.GetUserID(r)
 	if err != nil {
 		return 0, fmt.Errorf("h.authorizer.GetUserID fail %w", err)
 	}

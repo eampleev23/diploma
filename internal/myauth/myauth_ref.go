@@ -1,6 +1,7 @@
 package myauth
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -35,8 +36,18 @@ const (
 // Auth мидлвар, который проверяет авторизацию.
 func (au *Authorizer) Auth(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
+		au.logger.ZL.Debug("HERE WE ARE!!!")
 		// Здесь в перспективе будет мидлвар проверки авторизации, надо разобраться
 		// как использовать только в определенных хэндлерах
+		// Ппроверяем, не авторизован ли пользователь, отправивший запрос.
+		userID, err := au.GetUserID(r)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		au.logger.ZL.Debug("", zap.Int("userID", userID))
+		ctx := context.WithValue(r.Context(), KeyUserIDCtx, userID)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)
 }
@@ -70,16 +81,19 @@ type Claims struct {
 }
 
 // GetUserID возвращает ID пользователя.
-func (au *Authorizer) GetUserID(tokenString string) (int, error) {
+func (au *Authorizer) GetUserID(r *http.Request) (int, error) {
+	cookie, err := r.Cookie("token")
+	if err != nil {
+		return 0, fmt.Errorf("no cookies by name token %w", err)
+	}
 	// Создаем экземпляр структуры с утверждениями.
 	claims := &Claims{}
 	// Парсим из строки токена tokenString в структуру claims.
-	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+	_, err = jwt.ParseWithClaims(cookie.Value, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(au.config.SecretKey), nil
 	})
 	if err != nil {
 		au.logger.ZL.Info("Failed in case to get ownerId from token ", zap.Error(err))
 	}
-
 	return claims.UserID, nil
 }

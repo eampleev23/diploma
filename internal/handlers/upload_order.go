@@ -20,13 +20,13 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	// Ппроверяем, не авторизован ли пользователь, отправивший запрос.
-	userID, err := h.GetUserID(r)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
+	// Здесь надо получить ид пользователя через контекст
+	userID, ok := r.Context().Value(keyUserIDCtx).(int)
+	if !ok {
+		h.logger.ZL.Error("Error getting user ID from context")
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	h.logger.ZL.Debug("", zap.Int("userID", userID))
 	textPlainContent, err := h.services.GetTextPlain(r)
 	if err != nil {
 		h.logger.ZL.Error("GetTextPlain fail")
