@@ -48,8 +48,8 @@ func (h *Handlers) GetRoutes() (routes *chi.Mux) {
 	routes.Group(func(r chi.Router) {
 		r.Use(h.logger.RequestLogger)
 		r.Group(func(r chi.Router) {
+			r.Use(h.authorizer.Auth)
 			r.Route("/api/user", func(r chi.Router) {
-				r.Use(h.authorizer.Auth)
 				r.Method(methodPost, "/orders", http.HandlerFunc(h.UploadOrder))
 				r.Method(methodGet, "/orders", http.HandlerFunc(h.GetOrders))
 				r.Method(methodGet, "/balance", http.HandlerFunc(h.GetBalance))
