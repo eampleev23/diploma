@@ -1,4 +1,3 @@
-// test delete bin
 package main
 
 import (
