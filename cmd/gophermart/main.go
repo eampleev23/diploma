@@ -12,7 +12,6 @@ import (
 	"github.com/eampleev23/diploma/internal/myauth"
 	"github.com/eampleev23/diploma/internal/services"
 	"github.com/eampleev23/diploma/internal/store"
-	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 )
 
@@ -60,15 +59,19 @@ func run() error {
 	}
 
 	logger.ZL.Info("Running server", zap.String("address", appConfig.RanAddr))
-	routes := chi.NewRouter()
-	routes.Use(logger.RequestLogger)
-	routes.Post("/api/user/register", handlers.Register)
-	routes.Post("/api/user/login", handlers.Authentication)
-	routes.Post("/api/user/orders", handlers.UploadOrder)
-	routes.Get("/api/user/orders", handlers.GetOrders)
-	routes.Get("/api/user/balance", handlers.GetBalance)
-	routes.Post("/api/user/balance/withdraw", handlers.Withdrawn)
-	routes.Get("/api/user/withdrawals", handlers.Withdrawals)
+
+	//routes := chi.NewRouter()
+	routes := handlers.GetRoutes()
+
+	//routes.Use(logger.RequestLogger)
+	//routes.Post("/api/user/register", handlers.Register)
+	//routes.Post("/api/user/login", handlers.Authentication)
+	//routes.Post("/api/user/orders", handlers.UploadOrder)
+	//routes.Get("/api/user/orders", handlers.GetOrders)
+	//routes.Get("/api/user/balance", handlers.GetBalance)
+	//routes.Post("/api/user/balance/withdraw", handlers.Withdrawn)
+	//routes.Get("/api/user/withdrawals", handlers.Withdrawals)
+
 	err = http.ListenAndServe(appConfig.RanAddr, routes)
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("ошибка ListenAndServe: %w", err)

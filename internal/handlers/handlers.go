@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"net/http"
 
 	"github.com/eampleev23/diploma/internal/cnf"
@@ -34,6 +35,19 @@ func NewHandlers(
 		authorizer: au,
 		services:   serv,
 	}, nil
+}
+
+func (h *Handlers) GetRoutes() (routes *chi.Mux) {
+	routes = chi.NewRouter()
+	routes.Use(h.logger.RequestLogger)
+	routes.Post("/api/user/register", h.Register)
+	routes.Post("/api/user/login", h.Authentication)
+	routes.Post("/api/user/orders", h.UploadOrder)
+	routes.Get("/api/user/orders", h.GetOrders)
+	routes.Get("/api/user/balance", h.GetBalance)
+	routes.Post("/api/user/balance/withdraw", h.Withdrawn)
+	routes.Get("/api/user/withdrawals", h.Withdrawals)
+	return routes
 }
 
 func (h *Handlers) GetUserID(r *http.Request) (userID int, err error) {
