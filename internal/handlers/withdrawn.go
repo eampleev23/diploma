@@ -22,14 +22,9 @@ func (h *Handlers) Withdrawn(w http.ResponseWriter, r *http.Request) {
 	// Проверяем авторизацию
 	// Ппроверяем, не авторизован ли пользователь, отправивший запрос.
 	h.logger.ZL.Debug("Checking auth..")
-	userID, isAuth, err := h.GetUserID(r)
+	userID, err := h.GetUserID(r)
 	if err != nil {
 		h.logger.ZL.Error("GetUserID fail")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if !isAuth {
-		h.logger.ZL.Debug("Unauthorized user..")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}

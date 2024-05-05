@@ -31,10 +31,9 @@ func (h *Handlers) Authentication(w http.ResponseWriter, r *http.Request) {
 	userIDAlreadyAuth, err := h.GetUserID(r)
 	if err != nil {
 		h.logger.ZL.Error("GetUserID fail") //nolint:goconst //not needed
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	h.logger.ZL.Debug("isAuth", zap.Bool("auth", isAuth))
 
 	authUser, err := h.store.GetUserByLoginAndPassword(r.Context(), req)
 	if err != nil {
@@ -43,7 +42,7 @@ func (h *Handlers) Authentication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if isAuth && userIDAlreadyAuth != authUser.ID {
+	if userIDAlreadyAuth != authUser.ID {
 		h.logger.ZL.Error("Already authorized user trying to login by another one", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return

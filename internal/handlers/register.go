@@ -20,19 +20,12 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Проверяем, не авторизован ли пользователь, отправивший запрос.
-	_, isAuth, err := h.GetUserID(r)
+	_, err := h.GetUserID(r)
 	if err != nil {
 		h.logger.ZL.Error("GetUserID fail")
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	h.logger.ZL.Debug("isAuth", zap.Bool("auth", isAuth))
-	if isAuth {
-		h.logger.ZL.Error("already authorized user is going to register")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
 	// Получаем данные в случае корректного запроса.
 	var req models.UserRegReq
 	// Декодер работает потоково, кажется это правильнее + короче, чем анмаршал.

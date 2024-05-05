@@ -21,18 +21,12 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Ппроверяем, не авторизован ли пользователь, отправивший запрос.
-	userID, isAuth, err := h.GetUserID(r)
+	userID, err := h.GetUserID(r)
 	if err != nil {
 		h.logger.ZL.Error("GetUserID fail")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if !isAuth {
-		h.logger.ZL.Debug("Unaithorized user")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	h.logger.ZL.Debug("isAuth", zap.Bool("auth", isAuth))
 	h.logger.ZL.Debug("", zap.Int("userID", userID))
 	textPlainContent, err := h.services.GetTextPlain(r)
 	if err != nil {
