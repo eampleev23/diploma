@@ -22,7 +22,7 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 	}
 	userID, ok := r.Context().Value(keyUserIDCtx).(int)
 	if !ok {
-		h.logger.ZL.Error("Error getting user ID from context")
+		h.logger.ZL.Error("Fail getting userID from context")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

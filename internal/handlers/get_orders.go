@@ -12,7 +12,6 @@ import (
 func (h *Handlers) GetOrders(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(keyUserIDCtx).(int)
 	if !ok {
-		h.logger.ZL.Error("Error getting user ID from context")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

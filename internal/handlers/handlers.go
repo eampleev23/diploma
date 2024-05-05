@@ -13,6 +13,9 @@ import (
 	"github.com/eampleev23/diploma/internal/store"
 )
 
+const methodPost string = "POST"
+const methodGet string = "GET"
+
 type Handlers struct {
 	store      store.Store
 	config     *cnf.Config
@@ -42,30 +45,28 @@ var keyUserIDCtx myauth.Key = myauth.KeyUserIDCtx
 
 func (h *Handlers) GetRoutes() (routes *chi.Mux) {
 	routes = chi.NewRouter()
-
 	routes.Group(func(r chi.Router) {
 		r.Use(h.logger.RequestLogger)
 		r.Group(func(r chi.Router) {
 			r.Route("/api/user", func(r chi.Router) {
 				r.Use(h.authorizer.Auth)
-				r.Method("POST", "/orders", http.HandlerFunc(h.UploadOrder))
-				r.Method("GET", "/orders", http.HandlerFunc(h.GetOrders))
-				r.Method("GET", "/balance", http.HandlerFunc(h.GetBalance))
-				r.Method("POST", "/balance/withdraw", http.HandlerFunc(h.Withdrawn))
-				r.Method("GET", "/withdrawals", http.HandlerFunc(h.Withdrawals))
+				r.Method(methodPost, "/orders", http.HandlerFunc(h.UploadOrder))
+				r.Method(methodGet, "/orders", http.HandlerFunc(h.GetOrders))
+				r.Method(methodGet, "/balance", http.HandlerFunc(h.GetBalance))
+				r.Method(methodPost, "/balance/withdraw", http.HandlerFunc(h.Withdrawn))
+				r.Method(methodGet, "/withdrawals", http.HandlerFunc(h.Withdrawals))
 			})
 		})
 		r.Group(func(r chi.Router) {
 			r.Route("/api/user/register", func(r chi.Router) {
-				r.Method("POST", "/", http.HandlerFunc(h.Register))
+				r.Method(methodPost, "/", http.HandlerFunc(h.Register))
 			})
 		})
 		r.Group(func(r chi.Router) {
 			r.Route("/api/user/login", func(r chi.Router) {
-				r.Method("POST", "/", http.HandlerFunc(h.Authentication))
+				r.Method(methodPost, "/", http.HandlerFunc(h.Authentication))
 			})
 		})
-
 	})
 	return routes
 }
