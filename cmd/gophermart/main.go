@@ -57,21 +57,8 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("handlers constructor's error: %w", err)
 	}
-
 	logger.ZL.Info("Running server", zap.String("address", appConfig.RanAddr))
-
-	//routes := chi.NewRouter()
 	routes := handlers.GetRoutes()
-
-	//routes.Use(logger.RequestLogger)
-	//routes.Post("/api/user/register", handlers.Register)
-	//routes.Post("/api/user/login", handlers.Authentication)
-	//routes.Post("/api/user/orders", handlers.UploadOrder)
-	//routes.Get("/api/user/orders", handlers.GetOrders)
-	//routes.Get("/api/user/balance", handlers.GetBalance)
-	//routes.Post("/api/user/balance/withdraw", handlers.Withdrawn)
-	//routes.Get("/api/user/withdrawals", handlers.Withdrawals)
-
 	err = http.ListenAndServe(appConfig.RanAddr, routes)
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("ошибка ListenAndServe: %w", err)
