@@ -31,7 +31,7 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 	// Декодер работает потоково, кажется это правильнее + короче, чем анмаршал.
 	dec := json.NewDecoder(r.Body)
 	defer func() {
-		err = r.Body.Close()
+		err := r.Body.Close()
 		if err != nil {
 			h.logger.ZL.Error("r.Body.Close fail", zap.Error(err))
 			w.WriteHeader(http.StatusInternalServerError)
