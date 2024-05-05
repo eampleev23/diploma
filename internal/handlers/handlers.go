@@ -41,36 +41,29 @@ func NewHandlers(
 func (h *Handlers) GetRoutes() (routes *chi.Mux) {
 	routes = chi.NewRouter()
 
-	//routes.Group(func(r chi.Router) {
-	//	r.Use(h.logger.RequestLogger)
-	//	r.Group(func(r chi.Router) {
-	//		r.Route("/api/user/register", func(r chi.Router) {
-	//			r.Method("POST", "/", http.HandlerFunc(h.Register))
-	//		})
-	//	})
-	//	r.Group(func(r chi.Router) {
-	//		r.Route("/api/user/login", func(r chi.Router) {
-	//			r.Method("POST", "/", http.HandlerFunc(h.Authentication))
-	//		})
-	//	})
-	//	r.Group(func(r chi.Router) {
-	//		r.Route("/api/user", func(r chi.Router) {
-	//			r.Method("POST", "/orders", http.HandlerFunc(h.UploadOrder))
-	//			r.Method("GET", "/orders", http.HandlerFunc(h.GetOrders))
-	//			r.Method("GET", "/balance", http.HandlerFunc(h.GetBalance))
-	//			r.Method("POST", "/balance/withdraw", http.HandlerFunc(h.Withdrawn))
-	//			r.Method("POST", "/withdrawals", http.HandlerFunc(h.Withdrawals))
-	//		})
-	//	})
-	//})
-	routes.Use(h.logger.RequestLogger)
-	routes.Post("/api/user/register", h.Register)
-	routes.Post("/api/user/login", h.Authentication)
-	routes.Post("/api/user/orders", h.UploadOrder)
-	routes.Get("/api/user/orders", h.GetOrders)
-	routes.Get("/api/user/balance", h.GetBalance)
-	routes.Post("/api/user/balance/withdraw", h.Withdrawn)
-	routes.Get("/api/user/withdrawals", h.Withdrawals)
+	routes.Group(func(r chi.Router) {
+		r.Use(h.logger.RequestLogger)
+		r.Group(func(r chi.Router) {
+			r.Route("/api/user", func(r chi.Router) {
+				r.Method("POST", "/orders", http.HandlerFunc(h.UploadOrder))
+				r.Method("GET", "/orders", http.HandlerFunc(h.GetOrders))
+				r.Method("GET", "/balance", http.HandlerFunc(h.GetBalance))
+				r.Method("POST", "/balance/withdraw", http.HandlerFunc(h.Withdrawn))
+				r.Method("GET", "/withdrawals", http.HandlerFunc(h.Withdrawals))
+			})
+		})
+		r.Group(func(r chi.Router) {
+			r.Route("/api/user/register", func(r chi.Router) {
+				r.Method("POST", "/", http.HandlerFunc(h.Register))
+			})
+		})
+		r.Group(func(r chi.Router) {
+			r.Route("/api/user/login", func(r chi.Router) {
+				r.Method("POST", "/", http.HandlerFunc(h.Authentication))
+			})
+		})
+
+	})
 	return routes
 }
 
