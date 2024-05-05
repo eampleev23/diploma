@@ -27,24 +27,11 @@ func (h *Handlers) Authentication(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	// Проверяем, не авторизован ли пользователь, отправивший запрос.
-	userIDAlreadyAuth, err := h.GetUserID(r)
-	if err != nil {
-		h.logger.ZL.Error("GetUserID fail") //nolint:goconst //not needed
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	authUser, err := h.store.GetUserByLoginAndPassword(r.Context(), req)
 	if err != nil {
 		h.logger.ZL.Info("User is not found", zap.Error(err))
 		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
-	if userIDAlreadyAuth != authUser.ID {
-		h.logger.ZL.Error("Already authorized user trying to login by another one", zap.Error(err))
-		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
