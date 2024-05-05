@@ -16,7 +16,6 @@ func (h *Handlers) GetOrders(w http.ResponseWriter, r *http.Request) {
 	h.logger.ZL.Debug("Checking auth..")
 	userID, err := h.GetUserID(r)
 	if err != nil {
-		h.logger.ZL.Error("GetUserID fail")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}

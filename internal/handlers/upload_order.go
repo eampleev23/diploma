@@ -23,7 +23,6 @@ func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
 	// Ппроверяем, не авторизован ли пользователь, отправивший запрос.
 	userID, err := h.GetUserID(r)
 	if err != nil {
-		h.logger.ZL.Error("GetUserID fail")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
