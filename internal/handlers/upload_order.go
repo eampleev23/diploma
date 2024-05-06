@@ -3,15 +3,15 @@ package handlers
 import (
 	"context"
 	"errors"
+	"net/http"
+
 	"github.com/eampleev23/diploma/internal/models"
 	"github.com/eampleev23/diploma/internal/store"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 // UploadOrder добавляет новый заказ в систему (заявка на получение баллов лояльности).
 func (h *Handlers) UploadOrder(w http.ResponseWriter, r *http.Request) {
-
 	userID, ok := r.Context().Value(keyUserIDCtx).(int)
 	if !ok {
 		h.logger.ZL.Error("Fail getting userID from context")

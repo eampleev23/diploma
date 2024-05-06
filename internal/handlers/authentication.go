@@ -12,7 +12,7 @@ import (
 // Authentication авторизует зарегистрированного пользователя.
 func (h *Handlers) Authentication(w http.ResponseWriter, r *http.Request) {
 	// Проверяем формат запроса
-	contentType := r.Header.Get("Content-Type")                       //nolint:goconst //not needed
+	contentType := r.Header.Get("Content-Type")
 	supportsJSON := strings.Contains(contentType, "application/json") //nolint:goconst //not needed
 	if !supportsJSON {
 		w.WriteHeader(http.StatusBadRequest)
