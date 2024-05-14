@@ -4,10 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
-
-	"github.com/go-chi/chi/v5"
 
 	"github.com/golang-jwt/jwt/v4"
 
@@ -39,16 +36,6 @@ const (
 // Auth мидлвар, который проверяет авторизацию.
 func (au *Authorizer) Auth(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		routePattern := chi.RouteContext(r.Context())
-		if routePattern.RouteMethod == "POST" && routePattern.URLParams.Values[0] == "orders" {
-			// Проверяем формат запроса.
-			contentType := r.Header.Get("Content-Type")
-			textPlain := strings.Contains(contentType, "text/plain")
-			if !textPlain {
-				w.WriteHeader(http.StatusBadRequest)
-				return
-			}
-		}
 		userID, err := au.GetUserID(r)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
