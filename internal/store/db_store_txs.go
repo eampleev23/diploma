@@ -3,9 +3,8 @@ package store
 import (
 	"context"
 	"fmt"
-	"log"
-
 	"go.uber.org/zap"
+	"log"
 
 	"github.com/eampleev23/diploma/internal/models"
 )
@@ -56,5 +55,5 @@ func (d DBStore) MakeWithdrawTX(ctx context.Context, withdrawn models.Withdrawn)
 	if err != nil {
 		return fmt.Errorf("tx commit for create withdrawals fail: %w", err)
 	}
-	return nil
+	return err
 }
