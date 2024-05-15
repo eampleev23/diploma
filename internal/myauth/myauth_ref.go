@@ -3,10 +3,10 @@ package myauth
 import (
 	"context"
 	"fmt"
-	"github.com/golang-jwt/jwt/v4"
-	"log"
 	"net/http"
 	"time"
+
+	"github.com/golang-jwt/jwt/v4"
 
 	"github.com/eampleev23/diploma/internal/cnf"
 	"github.com/eampleev23/diploma/internal/mlg"
@@ -14,17 +14,15 @@ import (
 )
 
 type Authorizer struct {
-	l *mlg.ZapLog
-	c *cnf.Config
+	logger *mlg.ZapLog
+	config *cnf.Config
 }
 
-var keyLogger mlg.Key = mlg.KeyLoggerCtx
-
 // Initialize инициализирует синглтон авторизовывальщика с секретным ключом.
-func Initialize(c *cnf.Config, l *mlg.ZapLog) (*Authorizer, error) {
-	au := &Authorizer{
-		c: c,
-		l: l,
+func Initialize(c *cnf.Config, l *mlg.ZapLog) (Authorizer, error) {
+	au := Authorizer{
+		config: c,
+		logger: l,
 	}
 	return au, nil
 }
@@ -38,37 +36,29 @@ const (
 // Auth мидлвар, который проверяет авторизацию.
 func (au *Authorizer) Auth(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		_, err := r.Cookie("token")
+		userID, err := au.GetUserID(r)
 		if err != nil {
-			// Получаем логгер из контекста запроса
-			logger, ok := r.Context().Value(keyLogger).(*mlg.ZapLog)
-			if !ok {
-				log.Printf("Error getting logger")
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-			logger.ZL.Debug("No cookie", zap.String("err", err.Error()))
-			next.ServeHTTP(w, r)
+			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		// если кука уже установлена, то через контекст передаем 0
-		ctx := context.WithValue(r.Context(), KeyUserIDCtx, 0)
+		au.logger.ZL.Debug("", zap.Int("userID", userID))
+		ctx := context.WithValue(r.Context(), KeyUserIDCtx, userID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)
 }
 
 func (au *Authorizer) SetNewCookie(w http.ResponseWriter, userID int) (err error) {
-	au.l.ZL.Debug("setNewCookie got userID", zap.Int("userID", userID))
+	au.logger.ZL.Debug("setNewCookie got userID", zap.Int("userID", userID))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			// Когда создан токен.
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(au.c.TokenExp)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(au.config.TokenExp)),
 		},
 		// Собственное утверждение.
 		UserID: userID,
 	})
-	tokenString, err := token.SignedString([]byte(au.c.SecretKey))
+	tokenString, err := token.SignedString([]byte(au.config.SecretKey))
 	if err != nil {
 		return fmt.Errorf("token.SignedString fail.. %w", err)
 	}
@@ -87,16 +77,19 @@ type Claims struct {
 }
 
 // GetUserID возвращает ID пользователя.
-func (au *Authorizer) GetUserID(tokenString string) (int, error) {
-	// Создаем экземпляр структуры с утверждениями
+func (au *Authorizer) GetUserID(r *http.Request) (int, error) {
+	cookie, err := r.Cookie("token")
+	if err != nil {
+		return 0, fmt.Errorf("no cookies by name token %w", err)
+	}
+	// Создаем экземпляр структуры с утверждениями.
 	claims := &Claims{}
-	// Парсим из строки токена tokenString в структуру claims
-	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(au.c.SecretKey), nil
+	// Парсим из строки токена tokenString в структуру claims.
+	_, err = jwt.ParseWithClaims(cookie.Value, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(au.config.SecretKey), nil
 	})
 	if err != nil {
-		au.l.ZL.Info("Failed in case to get ownerId from token ", zap.Error(err))
+		au.logger.ZL.Info("Failed in case to get ownerId from token ", zap.Error(err))
 	}
-
 	return claims.UserID, nil
 }

@@ -1,12 +1,14 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 // MyAPIError — описание ошибки при неверном запросе.
 type MyAPIError struct {
-	Code      int       `json:"code"`
-	Message   string    `json:"message"`
 	Timestamp time.Time `json:"timestamp"`
+	Message   string    `json:"message"`
+	Code      int       `json:"code"`
 }
 
 // OrderAccrual - модель заказа.
