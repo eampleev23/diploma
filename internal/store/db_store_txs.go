@@ -55,5 +55,5 @@ func (d DBStore) MakeWithdrawTX(ctx context.Context, withdrawn models.Withdrawn)
 	if err != nil {
 		return fmt.Errorf("tx commit for create withdrawals fail: %w", err)
 	}
-	return err
+	return nil
 }
