@@ -3,7 +3,6 @@ package store
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
 	"log"
 
 	"github.com/eampleev23/diploma/internal/models"
@@ -19,14 +18,14 @@ func (d DBStore) MakeWithdrawTX(ctx context.Context, withdrawn models.Withdrawn)
 	defer func() {
 		_ = tx.Rollback()
 	}()
-	result, err := tx.Exec(`INSERT INTO withdraw
+	_, err = tx.Exec(`INSERT INTO withdraw
 				(sum, order_number, user_id)
 				VALUES($1, $2, $3)`, withdrawn.Sum, withdrawn.Order, withdrawn.UserID)
 	if err != nil {
-		return fmt.Errorf("tx.Exec fail: %w", err)
+		return fmt.Errorf("MakeWithdrawTX tx.Exec fail: %w", err)
 	}
-	lastID, err := result.LastInsertId()
-	d.l.ZL.Debug("Fail getting last id for insert MakeWithdrawTX exec", zap.Int64("withdraw id", lastID))
+	//lastID, err := result.LastInsertId()
+	//d.l.ZL.Debug("Fail getting last id for insert MakeWithdrawTX exec", zap.Int64("withdraw id", lastID))
 
 	accrualsSumRaw := tx.QueryRowContext(ctx, `SELECT SUM(accrual)
 				FROM orders
