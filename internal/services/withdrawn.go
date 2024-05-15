@@ -38,7 +38,7 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 
 func (serv *Services) MakeWithdrawn1(ctx context.Context, withdrawn models.Withdrawn) (err error) {
 	if err = serv.store.MakeWithdrawTX(ctx, withdrawn); err != nil {
-		return fmt.Errorf("MakeWithdrawTX fail..", err)
+		return fmt.Errorf("MakeWithdrawTX fail: %w", err)
 	}
 	return nil
 }
