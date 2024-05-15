@@ -28,6 +28,7 @@ type Store interface {
 	GetFullOrderByOrder(ctx context.Context, orderNumber string) (fullOrder models.Order, err error)
 	CreateWithdrawn(ctx context.Context, withdrawn models.Withdrawn) (withdrawnBack models.Withdrawn, err error)
 	GetWithdrawalsByUserID(ctx context.Context, userID int) (withdrawals []models.Withdrawn, err error)
+	MakeWithdrawTX(ctx context.Context, withdrawn models.Withdrawn) (err error)
 }
 
 func NewStorage(c *cnf.Config, l *mlg.ZapLog) (Store, error) {

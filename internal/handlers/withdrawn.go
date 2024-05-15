@@ -24,7 +24,6 @@ func (h *Handlers) Withdrawn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var req models.Withdrawn
-	// Декодер работает потоково, кажется это правильнее + короче, чем анмаршал.
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&req); err != nil {
 		h.logger.ZL.Info("cannot decode request JSON body", zap.Error(err))
@@ -35,8 +34,9 @@ func (h *Handlers) Withdrawn(w http.ResponseWriter, r *http.Request) {
 	err := h.services.MoonCheck(req.Order)
 	if err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
 	}
-	if err := h.services.MakeWithdrawn(r.Context(), req); err != nil {
+	if err := h.services.MakeWithdrawn1(r.Context(), req); err != nil {
 		h.logger.ZL.Info("Sum of the balance is not enough..", zap.Error(err))
 		w.WriteHeader(http.StatusPaymentRequired)
 		return

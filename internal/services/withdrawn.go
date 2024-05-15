@@ -3,17 +3,13 @@ package services
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/eampleev23/diploma/internal/models"
 	"go.uber.org/zap"
 )
 
 func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdrawn) (err error) {
-	serv.logger.ZL.Debug("Service MakeWithdrawn2 has started..")
-	serv.logger.ZL.Debug("Got withdrawn",
-		zap.Float64("sum", withdrawn.Sum),
-		zap.Int("user_id", withdrawn.UserID),
-	)
 	// Здесь получаем баланс в виде суммы начислений и суммы списаний
 	current, withdrawnSum, err := serv.GetBalance(ctx, withdrawn.UserID)
 	if err != nil {
@@ -23,8 +19,7 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 		zap.Float64("current", current),
 		zap.Float64("withdrawnSum", withdrawnSum),
 	)
-	serv.logger.ZL.Debug("Баланс правильно посчитался")
-	serv.logger.ZL.Debug("Дальше нужно понять хватает ли баланса для снятия")
+
 	if current-withdrawnSum < 0 {
 		// На балансе недостаточно денег
 		return fmt.Errorf("недостаточно баллов для списания")
@@ -41,4 +36,12 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 		)
 		return nil
 	}
+}
+
+func (serv *Services) MakeWithdrawn1(ctx context.Context, withdrawn models.Withdrawn) (err error) {
+	log.Println("here we are")
+	if err = serv.store.MakeWithdrawTX(ctx, withdrawn); err != nil {
+		return fmt.Errorf("MakeWithdrawTX fail..", err)
+	}
+	return nil
 }
