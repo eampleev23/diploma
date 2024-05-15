@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+*.DS_Store
 
 # Test binary, built with `go test -c`
 *.test
@@ -12,12 +13,21 @@
 *.out
 
 # Binaries
+cmd/accrual/main
 cmd/gophermart/main
 cmd/gophermart/gophermart
 
 # Dependency directories (remove the comment below to include it)
 vendor/
 
+
 # IDEs directories
 .idea
 .vscode
+golangci-lint/
+
+# Local file store
+./cmd/shortener/tmp/short-url-db.json
+
+# Local DB directories
+db/data

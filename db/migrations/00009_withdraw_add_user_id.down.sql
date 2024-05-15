@@ -1,0 +1,4 @@
+BEGIN TRANSACTION;
+ALTER TABLE withdraw
+    DROP COLUMN user_id;
+COMMIT;
