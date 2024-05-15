@@ -24,8 +24,6 @@ func (d DBStore) MakeWithdrawTX(ctx context.Context, withdrawn models.Withdrawn)
 	if err != nil {
 		return fmt.Errorf("MakeWithdrawTX tx.Exec fail: %w", err)
 	}
-	//lastID, err := result.LastInsertId()
-	//d.l.ZL.Debug("Fail getting last id for insert MakeWithdrawTX exec", zap.Int64("withdraw id", lastID))
 
 	accrualsSumRaw := tx.QueryRowContext(ctx, `SELECT SUM(accrual)
 				FROM orders
