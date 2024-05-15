@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/eampleev23/diploma/internal/models"
 	"go.uber.org/zap"
@@ -39,9 +38,8 @@ func (serv *Services) MakeWithdrawn(ctx context.Context, withdrawn models.Withdr
 }
 
 func (serv *Services) MakeWithdrawn1(ctx context.Context, withdrawn models.Withdrawn) (err error) {
-	log.Println("here we are")
 	if err = serv.store.MakeWithdrawTX(ctx, withdrawn); err != nil {
-		return fmt.Errorf("MakeWithdrawTX fail..", err)
+		return fmt.Errorf("MakeWithdrawTX fail: %w", err)
 	}
 	return nil
 }
